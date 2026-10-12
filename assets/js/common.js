@@ -136,7 +136,8 @@
 
   function logoMarkup() {
     return '<a class="brand" href="/" aria-label="ReidConvert home">' +
-      '<img src="/assets/img/logo.jpg" alt="ReidConvert" width="150" height="40" decoding="async">' +
+      '<img class="brand-mark" src="/assets/img/logo-mark.png" alt="" width="64" height="64" decoding="async">' +
+      '<span class="brand-name">ReidConvert</span>' +
       '</a>';
   }
 
@@ -181,7 +182,7 @@
     // mobile: tap "Tools" opens submenu inline
     var sub = mount.querySelector('.has-sub > a');
     sub.addEventListener('click', function (e) {
-      if (window.matchMedia('(max-width: 820px)').matches) {
+      if (window.matchMedia('(max-width: 768px)').matches) {
         e.preventDefault();
         mount.querySelector('.has-sub').classList.toggle('open');
       }
@@ -200,7 +201,10 @@
     mount.innerHTML =
       '<div class="container footer-grid">' +
         '<div class="footer-brand">' +
-          '<img src="/assets/img/logo.jpg" alt="ReidConvert" width="160" height="43" loading="lazy">' +
+          '<a class="brand footer-brand-lockup" href="/" aria-label="ReidConvert home">' +
+            '<span class="mark-chip"><img src="/assets/img/logo-mark.png" alt="" width="56" height="56" loading="lazy"></span>' +
+            '<span class="brand-name">ReidConvert</span>' +
+          '</a>' +
           '<p>Free, private file conversion that runs entirely in your browser. Your files are never uploaded.</p>' +
         '</div>' +
         '<div><h3>Converters</h3><ul>' + toolLinks + '</ul></div>' +
