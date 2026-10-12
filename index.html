@@ -2,525 +2,157 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ReidConvert — Free Private Image Converter (HEIC, PNG, JPG, WEBP)</title>
-<meta name="description" content="Convert HEIC, HEIF, PNG, JPG and WEBP images to JPG, PNG or WEBP right in your browser. Free, fast, and completely private — your files never leave your device.">
-<meta name="theme-color" content="#1d4ed8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReidConvert — Free, Private File &amp; Image Converter</title>
+<meta name="description" content="Convert HEIC, images and documents right in your browser. Free, fast and 100% private — your files are never uploaded. Start with our HEIC to JPG converter.">
 <link rel="canonical" href="https://reidconvert.com/">
+<meta name="theme-color" content="#01295D">
 
-<!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="ReidConvert — Free Private Image Converter">
-<meta property="og:description" content="Convert HEIC, HEIF, PNG, JPG and WEBP to JPG, PNG or WEBP — right in your browser. Files never leave your device.">
-<meta property="og:url" content="https://reidconvert.com/">
 <meta property="og:site_name" content="ReidConvert">
-<meta property="og:image" content="https://reidconvert.com/og.svg">
+<meta property="og:title" content="ReidConvert — Free, Private File &amp; Image Converter">
+<meta property="og:description" content="Convert HEIC, images and documents in your browser. Free, fast and 100% private — files never leave your device.">
+<meta property="og:url" content="https://reidconvert.com/">
+<meta property="og:image" content="https://reidconvert.com/assets/img/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="ReidConvert — Free Private Image Converter">
-<meta name="twitter:description" content="Convert HEIC, HEIF, PNG, JPG and WEBP to JPG, PNG or WEBP — right in your browser. Files never leave your device.">
-<meta name="twitter:image" content="https://reidconvert.com/og.svg">
+<meta name="twitter:title" content="ReidConvert — Free, Private File &amp; Image Converter">
+<meta name="twitter:description" content="Convert HEIC, images and documents in your browser. 100% private — files never leave your device.">
+<meta name="twitter:image" content="https://reidconvert.com/assets/img/og.png">
 
-<!-- Favicon -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d4ed8'/%3E%3Cpath d='M20 24h10l6 8-6 8H20' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M44 24v16m0-16l6 6m-6-6l-6 6' fill='none' stroke='%2393c5fd' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-
-<script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-
-<style>
-  :root{
-    --bg:#f4f6fb;
-    --card:#ffffff;
-    --ink:#111827;
-    --muted:#4b5563;
-    --accent:#1d4ed8;
-    --accent-dark:#1e40af;
-    --border:#d1d5db;
-    --ok:#047857;
-    --ok-bg:#ecfdf5;
-    --radius:14px;
-    --shadow:0 1px 3px rgba(17,24,39,.08),0 10px 30px rgba(17,24,39,.06);
-  }
-  *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
-  body{
-    margin:0;
-    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:var(--bg);
-    color:var(--ink);
-    line-height:1.55;
-  }
-  a{color:var(--accent-dark)}
-  .wrap{max-width:860px;margin:0 auto;padding:0 20px}
-  header{padding:40px 0 10px;text-align:center}
-  .logo{display:inline-flex;align-items:center;gap:12px;font-weight:800;font-size:1.6rem;letter-spacing:-.02em}
-  .logo svg{width:40px;height:40px}
-  .logo span b{color:var(--accent)}
-  header p.tag{margin:12px auto 0;max-width:620px;color:var(--muted);font-size:1.05rem}
-
-  .privacy{
-    display:flex;align-items:center;gap:10px;justify-content:center;
-    margin:22px auto 0;max-width:620px;
-    background:var(--ok-bg);color:var(--ok);
-    border:1px solid #a7f3d0;border-radius:999px;
-    padding:10px 18px;font-weight:600;font-size:.95rem;
-  }
-  .privacy svg{width:20px;height:20px;flex:none}
-
-  main{padding:28px 0 10px}
-
-  .drop{
-    background:var(--card);border:2px dashed var(--border);border-radius:var(--radius);
-    padding:44px 24px;text-align:center;box-shadow:var(--shadow);
-    transition:border-color .15s ease,background .15s ease;cursor:pointer;
-  }
-  .drop:hover,.drop:focus-visible{border-color:var(--accent);outline:none}
-  .drop.drag{border-color:var(--accent);background:#eff4ff}
-  .drop h2{margin:0 0 6px;font-size:1.25rem}
-  .drop p{margin:0;color:var(--muted)}
-  .drop .big{font-size:2.4rem;line-height:1;margin-bottom:12px}
-  .btn{
-    display:inline-block;margin-top:16px;background:var(--accent);color:#fff;
-    border:0;border-radius:10px;padding:12px 22px;font-size:1rem;font-weight:700;
-    cursor:pointer;text-decoration:none;
-  }
-  .btn:hover{background:var(--accent-dark)}
-  .btn:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
-  .btn.secondary{background:#fff;color:var(--accent-dark);border:1px solid var(--border)}
-  .btn.secondary:hover{background:#f3f4f6}
-  .btn:disabled{opacity:.5;cursor:not-allowed}
-
-  .controls{
-    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-    box-shadow:var(--shadow);padding:18px 20px;margin-top:20px;
-    display:flex;flex-wrap:wrap;gap:18px 26px;align-items:center;
-  }
-  .controls .field{display:flex;flex-direction:column;gap:6px}
-  .controls label{font-weight:600;font-size:.9rem}
-  select,input[type=range]{accent-color:var(--accent)}
-  select{
-    padding:8px 10px;border:1px solid var(--border);border-radius:8px;
-    font-size:1rem;background:#fff;color:var(--ink);min-width:120px;
-  }
-  .qwrap{min-width:200px}
-  .qwrap .row{display:flex;align-items:center;gap:10px}
-  input[type=range]{width:150px}
-  .qval{font-variant-numeric:tabular-nums;font-weight:700;min-width:42px}
-  .controls .spacer{flex:1 1 auto}
-
-  .progress{display:none;margin-top:18px}
-  .progress.show{display:block}
-  .bar{height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden}
-  .bar>i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s ease}
-  .progress p{margin:8px 2px 0;color:var(--muted);font-size:.92rem}
-
-  .grid{
-    display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-    gap:16px;margin-top:22px;
-  }
-  .item{
-    background:var(--card);border:1px solid var(--border);border-radius:12px;
-    overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;
-  }
-  .thumb{
-    aspect-ratio:4/3;background:#eef1f6 center/cover no-repeat;
-    display:flex;align-items:center;justify-content:center;color:var(--muted);
-    font-size:.85rem;position:relative;
-  }
-  .thumb .spin{
-    width:26px;height:26px;border:3px solid #cbd5e1;border-top-color:var(--accent);
-    border-radius:50%;animation:spin .8s linear infinite;
-  }
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .meta{padding:10px 12px;font-size:.82rem}
-  .meta .name{font-weight:700;word-break:break-word;line-height:1.3}
-  .meta .sz{color:var(--muted);margin-top:2px}
-  .meta .err{color:#b91c1c;margin-top:4px;font-weight:600}
-  .dl{
-    display:block;text-align:center;margin:0 10px 12px;
-    background:var(--accent);color:#fff;border-radius:8px;padding:9px;
-    font-weight:700;text-decoration:none;font-size:.88rem;
-  }
-  .dl:hover{background:var(--accent-dark)}
-  .dl[aria-disabled=true]{background:#9ca3af;pointer-events:none}
-
-  .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
-
-  details.help{margin-top:30px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px 18px}
-  details.help summary{cursor:pointer;font-weight:700;padding:12px 0}
-  details.help ul{margin:0 0 14px;padding-left:20px;color:var(--muted)}
-
-  footer{text-align:center;color:var(--muted);font-size:.9rem;padding:40px 0 50px}
-  footer a{color:var(--accent-dark)}
-  .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-
-  @media (max-width:560px){
-    header{padding:28px 0 6px}
-    .logo{font-size:1.35rem}
-    .controls{gap:14px 18px}
-    input[type=range]{width:120px}
-  }
-</style>
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script defer src="/assets/js/tools.js"></script>
+<script defer src="/assets/js/common.js"></script>
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <div class="logo">
-      <svg viewBox="0 0 64 64" aria-hidden="true">
-        <rect width="64" height="64" rx="14" fill="#1d4ed8"/>
-        <path d="M20 24h10l6 8-6 8H20" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M44 24v16m0-16l6 6m-6-6l-6 6" fill="none" stroke="#93c5fd" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span>Reid<b>Convert</b></span>
-    </div>
-    <p class="tag">Free image converter for HEIC, HEIF, PNG, JPG and WEBP — turn them into JPG, PNG or WEBP in seconds.</p>
-    <div class="privacy">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-        <path d="M12 3l7 3v5c0 4.5-3 8.2-7 9-4-0.8-7-4.5-7-9V6l7-3z" stroke-linejoin="round"/>
-        <path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      100% private — your files are converted on your device and never uploaded.
-    </div>
-  </div>
-</header>
+<header id="site-header"></header>
 
-<main class="wrap">
-  <div id="drop" class="drop" role="button" tabindex="0" aria-label="Add images: drag and drop here, or press Enter to choose files">
-    <div class="big" aria-hidden="true">🖼️</div>
-    <h2>Drag &amp; drop your images here</h2>
-    <p>or choose files from your device — HEIC, HEIF, PNG, JPG, WEBP</p>
-    <button type="button" class="btn" id="pick">Choose files</button>
-    <input type="file" id="file" accept=".heic,.heif,image/heic,image/heif,image/png,image/jpeg,image/webp" multiple hidden>
-  </div>
+<main id="main">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <h1>Convert your files in seconds — privately.</h1>
+      <p class="sub">Fast, free, browser-based converters. Drop a file below and ReidConvert sends it straight to the right tool. Nothing is ever uploaded.</p>
 
-  <div class="controls" aria-label="Conversion settings">
-    <div class="field">
-      <label for="fmt">Convert to</label>
-      <select id="fmt">
-        <option value="image/jpeg">JPG</option>
-        <option value="image/png">PNG</option>
-        <option value="image/webp">WEBP</option>
-      </select>
-    </div>
-    <div class="field qwrap" id="qualityField">
-      <label for="quality">Quality (<span id="qfmt">JPG</span>)</label>
-      <div class="row">
-        <input type="range" id="quality" min="10" max="100" value="90" step="1">
-        <span class="qval" id="qval">90%</span>
+      <div class="hero-drop" id="heroDrop" role="button" tabindex="0" aria-label="Drop a file to convert, or press Enter to choose a file">
+        <div class="ico" aria-hidden="true">☁️</div>
+        <p><strong>Drag &amp; drop a file to get started</strong></p>
+        <p class="hint">We'll route it to the right converter. iPhone HEIC photos go to HEIC&nbsp;to&nbsp;JPG.</p>
+        <button type="button" class="btn btn-gold" id="heroPick">Choose a file</button>
+        <input type="file" id="heroInput" hidden>
+      </div>
+      <p class="route-msg" id="routeMsg" role="status" aria-live="polite"></p>
+
+      <div class="badges">
+        <span>🔒 100% private</span>
+        <span>⚡ Runs in your browser</span>
+        <span>🆓 Free &amp; unlimited</span>
+        <span>🚫 No sign-up</span>
       </div>
     </div>
-    <div class="spacer"></div>
-    <button type="button" class="btn secondary" id="clear" disabled>Clear all</button>
-  </div>
+  </section>
 
-  <div class="progress" id="progress" aria-live="polite">
-    <div class="bar"><i id="barFill"></i></div>
-    <p id="progressText">Converting…</p>
-  </div>
+  <!-- TOOLS -->
+  <section class="section" id="tools">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Converters</p>
+        <h2>Pick a tool</h2>
+        <p>More converters are on the way. HEIC to JPG is live now.</p>
+      </div>
+      <div class="tool-grid" id="toolGrid"></div>
+    </div>
+  </section>
 
-  <section id="grid" class="grid" aria-label="Converted images"></section>
-
-  <div class="actions">
-    <button type="button" class="btn" id="zip" disabled>⬇ Download all as ZIP</button>
-  </div>
-
-  <details class="help">
-    <summary>How it works &amp; FAQ</summary>
-    <ul>
-      <li><b>Private by design.</b> Everything runs in your browser using JavaScript and the HTML canvas. No image is ever sent to a server.</li>
-      <li><b>HEIC / HEIF</b> (the format iPhones use) is decoded in-browser with the open-source heic2any library. Live Photos or bursts that contain multiple frames are each exported separately.</li>
-      <li><b>Quality slider</b> applies to JPG and WEBP output. PNG is lossless, so the slider is hidden for it.</li>
-      <li><b>Nothing installs.</b> It's just a web page — bookmark it and use it offline-friendly on phone or desktop.</li>
-    </ul>
-  </details>
+  <!-- PRIVACY -->
+  <section class="section section-soft">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Private by design</p>
+        <h2>Your files never leave your device</h2>
+        <p>ReidConvert does all the work inside your browser using JavaScript. There is no upload, no server storage, and nothing to delete afterwards.</p>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <div class="fico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 9-4-.8-7-4.5-7-9V6l7-3z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>No uploads, ever</h3>
+          <p>Conversion happens locally. Your photos and documents stay on your computer or phone.</p>
+        </div>
+        <div class="feature">
+          <div class="fico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" stroke-linejoin="round"/></svg></div>
+          <h3>Instant &amp; offline-friendly</h3>
+          <p>No waiting in a queue. Once the page loads, conversions are near-instant.</p>
+        </div>
+        <div class="feature">
+          <div class="fico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Free with no limits</h3>
+          <p>No account, no watermarks, no per-file fees. Convert as many files as you like.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
-<footer class="wrap">
-  <p>ReidConvert — a free, private, in-browser image converter. Your files never leave your device.</p>
-  <p>&copy; <span id="yr">2026</span> ReidConvert · <a href="https://reidconvert.com/">reidconvert.com</a></p>
-</footer>
+<footer id="site-footer"></footer>
 
 <script>
-(function(){
-  "use strict";
+(function () {
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    var RC = window.RC, TOOLS = window.RC_TOOLS || [];
+    if (!RC) return;
 
-  var dropEl   = document.getElementById('drop');
-  var pickBtn  = document.getElementById('pick');
-  var fileInp  = document.getElementById('file');
-  var fmtSel   = document.getElementById('fmt');
-  var qInp     = document.getElementById('quality');
-  var qVal     = document.getElementById('qval');
-  var qFmt     = document.getElementById('qfmt');
-  var qField   = document.getElementById('qualityField');
-  var gridEl   = document.getElementById('grid');
-  var zipBtn   = document.getElementById('zip');
-  var clearBtn = document.getElementById('clear');
-  var progEl   = document.getElementById('progress');
-  var barFill  = document.getElementById('barFill');
-  var progTxt  = document.getElementById('progressText');
+    var ARROWS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 8h11l-3-3m3 3l-3 3" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 16H9l3-3m-3 3l3 3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-  document.getElementById('yr').textContent = (new Date()).getFullYear();
-
-  // Converted results kept for ZIP + cleanup
-  var results = []; // {name, blob, url}
-  var busy = false;
-
-  var EXT = { 'image/jpeg':'jpg', 'image/png':'png', 'image/webp':'webp' };
-
-  function fmtLabel(){ return fmtSel.value === 'image/png' ? 'PNG' : (fmtSel.value === 'image/webp' ? 'WEBP' : 'JPG'); }
-  function usesQuality(){ return fmtSel.value === 'image/jpeg' || fmtSel.value === 'image/webp'; }
-
-  function syncQualityUI(){
-    qFmt.textContent = fmtLabel();
-    qField.style.display = usesQuality() ? '' : 'none';
-    qVal.textContent = qInp.value + '%';
-  }
-  fmtSel.addEventListener('change', syncQualityUI);
-  qInp.addEventListener('input', function(){ qVal.textContent = qInp.value + '%'; });
-  syncQualityUI();
-
-  function humanSize(n){
-    if(n < 1024) return n + ' B';
-    if(n < 1048576) return (n/1024).toFixed(1) + ' KB';
-    return (n/1048576).toFixed(2) + ' MB';
-  }
-
-  function baseName(name){
-    var i = name.lastIndexOf('.');
-    return i > 0 ? name.slice(0, i) : name;
-  }
-
-  function isHeic(file){
-    var n = (file.name || '').toLowerCase();
-    return file.type === 'image/heic' || file.type === 'image/heif' ||
-           n.endsWith('.heic') || n.endsWith('.heif');
-  }
-
-  // Decode any (non-heic) image file to an HTMLImageElement via object URL
-  function loadImage(blob){
-    return new Promise(function(resolve, reject){
-      var url = URL.createObjectURL(blob);
-      var img = new Image();
-      img.onload = function(){ URL.revokeObjectURL(url); resolve(img); };
-      img.onerror = function(){ URL.revokeObjectURL(url); reject(new Error('Could not read this image.')); };
-      img.src = url;
-    });
-  }
-
-  // Draw an image onto a canvas and export as the chosen format
-  function encode(img){
-    var canvas = document.createElement('canvas');
-    canvas.width  = img.naturalWidth  || img.width;
-    canvas.height = img.naturalHeight || img.height;
-    var ctx = canvas.getContext('2d');
-    // White background for formats without alpha (JPG)
-    if(fmtSel.value === 'image/jpeg'){
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0,0,canvas.width,canvas.height);
-    }
-    ctx.drawImage(img,0,0);
-    var type = fmtSel.value;
-    var q = usesQuality() ? (parseInt(qInp.value,10)/100) : undefined;
-    return new Promise(function(resolve, reject){
-      canvas.toBlob(function(blob){
-        if(blob) resolve(blob);
-        else reject(new Error('This browser could not encode ' + fmtLabel() + '.'));
-      }, type, q);
-    });
-  }
-
-  // HEIC -> one or more image blobs (handles multi-image files)
-  function decodeHeic(file){
-    var targetType = fmtSel.value === 'image/png' ? 'image/png' : 'image/jpeg'; // intermediate
-    return heic2any({ blob:file, toType:targetType, quality:0.95 }).then(function(out){
-      return Array.isArray(out) ? out : [out];
-    });
-  }
-
-  function addItemCard(label){
-    var card = document.createElement('div');
-    card.className = 'item';
-    card.innerHTML =
-      '<div class="thumb"><div class="spin" role="img" aria-label="Converting"></div></div>' +
-      '<div class="meta"><div class="name"></div><div class="sz">Working…</div></div>' +
-      '<a class="dl" aria-disabled="true" href="#">Download</a>';
-    card.querySelector('.name').textContent = label;
-    gridEl.appendChild(card);
-    return card;
-  }
-
-  function finishCard(card, label, blob){
-    var url = URL.createObjectURL(blob);
-    var thumb = card.querySelector('.thumb');
-    thumb.innerHTML = '';
-    thumb.style.backgroundImage = 'url("' + url + '")';
-    thumb.setAttribute('role','img');
-    thumb.setAttribute('aria-label', label + ' preview');
-    card.querySelector('.sz').textContent = humanSize(blob.size) + ' · ' + fmtLabel();
-    var dl = card.querySelector('.dl');
-    dl.href = url;
-    dl.setAttribute('download', label);
-    dl.removeAttribute('aria-disabled');
-    dl.textContent = '⬇ Download';
-    results.push({ name: label, blob: blob, url: url });
-  }
-
-  function failCard(card, msg){
-    var thumb = card.querySelector('.thumb');
-    thumb.innerHTML = '⚠️';
-    thumb.setAttribute('aria-label','Conversion failed');
-    var meta = card.querySelector('.meta');
-    card.querySelector('.sz').textContent = '';
-    var err = document.createElement('div');
-    err.className = 'err';
-    err.textContent = msg || 'Could not convert this file.';
-    meta.appendChild(err);
-    var dl = card.querySelector('.dl');
-    dl.setAttribute('aria-disabled','true');
-    dl.textContent = 'Unavailable';
-  }
-
-  function uniqueName(desired){
-    var taken = {};
-    results.forEach(function(r){ taken[r.name.toLowerCase()] = true; });
-    if(!taken[desired.toLowerCase()]) return desired;
-    var dot = desired.lastIndexOf('.');
-    var stem = dot>0 ? desired.slice(0,dot) : desired;
-    var ext  = dot>0 ? desired.slice(dot) : '';
-    var i = 2;
-    while(taken[(stem + '-' + i + ext).toLowerCase()]) i++;
-    return stem + '-' + i + ext;
-  }
-
-  function setProgress(done, total){
-    progEl.classList.add('show');
-    var pct = total ? Math.round(done/total*100) : 0;
-    barFill.style.width = pct + '%';
-    progTxt.textContent = done < total ? ('Converting ' + (done+1) + ' of ' + total + '…') : ('Done — converted ' + total + ' image' + (total===1?'':'s') + '.');
-  }
-
-  function setBusy(state){
-    busy = state;
-    pickBtn.disabled = state;
-    fmtSel.disabled = state;
-    qInp.disabled = state;
-  }
-
-  function refreshButtons(){
-    var has = results.length > 0;
-    zipBtn.disabled = !has || busy;
-    clearBtn.disabled = (gridEl.children.length === 0) || busy;
-  }
-
-  function clearAll(){
-    if(busy) return;
-    results.forEach(function(r){ URL.revokeObjectURL(r.url); });
-    results = [];
-    gridEl.innerHTML = '';
-    progEl.classList.remove('show');
-    barFill.style.width = '0';
-    refreshButtons();
-  }
-
-  async function handleFiles(fileList){
-    var files = Array.prototype.slice.call(fileList).filter(function(f){ return f && (f.type.indexOf('image')===0 || isHeic(f)); });
-    if(!files.length){
-      alert('Please choose image files (HEIC, HEIF, PNG, JPG or WEBP).');
-      return;
-    }
-    setBusy(true);
-    refreshButtons();
-
-    var ext = EXT[fmtSel.value];
-    var total = files.length;
-
-    for(var i=0;i<files.length;i++){
-      var file = files[i];
-      setProgress(i, total);
-      var stem = baseName(file.name || ('image-' + (i+1)));
-
-      try {
-        if(isHeic(file)){
-          var blobs = await decodeHeic(file);
-          for(var j=0;j<blobs.length;j++){
-            var card = addItemCard(stem + (blobs.length>1 ? ('-' + (j+1)) : ''));
-            try {
-              var img = await loadImage(blobs[j]);
-              var outBlob = await encode(img);
-              finishCard(card, uniqueName(stem + (blobs.length>1 ? ('-'+(j+1)) : '') + '.' + ext), outBlob);
-            } catch(e){ failCard(card, e.message); }
-          }
-        } else {
-          var card2 = addItemCard(stem);
-          try {
-            var img2 = await loadImage(file);
-            var outBlob2 = await encode(img2);
-            finishCard(card2, uniqueName(stem + '.' + ext), outBlob2);
-          } catch(e2){ failCard(card2, e2.message); }
-        }
-      } catch(err){
-        var card3 = addItemCard(stem);
-        failCard(card3, (err && err.message) ? err.message : 'Could not convert this file.');
+    /* build the tool grid from the registry */
+    var grid = document.getElementById('toolGrid');
+    grid.innerHTML = TOOLS.map(function (t) {
+      var live = t.status === 'live';
+      var tag = live ? '' : '<span class="soon-tag badge">Coming soon</span>';
+      var go = live
+        ? '<span class="go">Open converter &rarr;</span>'
+        : '<span class="go" style="color:var(--muted)">Coming soon</span>';
+      var inner =
+        tag +
+        '<div class="tool-ico">' + ARROWS + '</div>' +
+        '<div class="fmt">' + RC.escapeHtml(t.from) + ' &rarr; ' + RC.escapeHtml(t.to) + '</div>' +
+        '<h3>' + RC.escapeHtml(t.name) + '</h3>' +
+        '<p class="desc">' + RC.escapeHtml(t.desc) + '</p>' + go;
+      if (live) {
+        return '<a class="tool-card" href="' + t.url + '">' + inner + '</a>';
       }
-      refreshButtons();
+      return '<div class="tool-card soon" aria-label="' + RC.escapeHtml(t.name) + ' (coming soon)">' + inner + '</div>';
+    }).join('');
+
+    /* hero drop routing */
+    var drop = document.getElementById('heroDrop');
+    var input = document.getElementById('heroInput');
+    var pick = document.getElementById('heroPick');
+    var msg = document.getElementById('routeMsg');
+
+    pick.addEventListener('click', function (e) { e.stopPropagation(); input.click(); });
+
+    function route(files) {
+      msg.textContent = '';
+      var f = files[0];
+      var ext = RC.extOf(f.name);
+      var tool = RC.toolForExt(ext);
+      if (tool && tool.status === 'live') {
+        msg.textContent = 'Opening ' + tool.name + '…';
+        window.location.href = tool.url;
+      } else if (tool) {
+        msg.textContent = '“' + tool.name + '” is coming soon — check back shortly!';
+      } else if (ext) {
+        msg.textContent = 'We don’t have a converter for .' + ext + ' files yet. Try an HEIC photo!';
+      } else {
+        msg.textContent = 'Please choose a file with a recognised type.';
+      }
     }
-
-    setProgress(total, total);
-    setBusy(false);
-    refreshButtons();
-  }
-
-  async function downloadZip(){
-    if(!results.length || typeof JSZip === 'undefined') return;
-    zipBtn.disabled = true;
-    var prev = zipBtn.textContent;
-    zipBtn.textContent = 'Zipping…';
-    try {
-      var zip = new JSZip();
-      results.forEach(function(r){ zip.file(r.name, r.blob); });
-      var content = await zip.generateAsync({ type:'blob' });
-      var url = URL.createObjectURL(content);
-      var a = document.createElement('a');
-      a.href = url; a.download = 'reidconvert-images.zip';
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
-    } catch(e){
-      alert('Sorry, the ZIP could not be created: ' + e.message);
-    }
-    zipBtn.textContent = prev;
-    zipBtn.disabled = false;
-  }
-
-  // ---- events ----
-  pickBtn.addEventListener('click', function(e){ e.stopPropagation(); fileInp.click(); });
-  dropEl.addEventListener('click', function(){ if(!busy) fileInp.click(); });
-  dropEl.addEventListener('keydown', function(e){
-    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); if(!busy) fileInp.click(); }
+    RC.setupDropzone(drop, route, { inputEl: input });
   });
-  fileInp.addEventListener('change', function(){
-    if(fileInp.files && fileInp.files.length) handleFiles(fileInp.files);
-    fileInp.value = '';
-  });
-
-  ['dragenter','dragover'].forEach(function(ev){
-    dropEl.addEventListener(ev, function(e){ e.preventDefault(); dropEl.classList.add('drag'); });
-  });
-  ['dragleave','drop'].forEach(function(ev){
-    dropEl.addEventListener(ev, function(e){ e.preventDefault(); if(ev==='drop' || e.target===dropEl) dropEl.classList.remove('drag'); });
-  });
-  dropEl.addEventListener('drop', function(e){
-    e.preventDefault(); dropEl.classList.remove('drag');
-    if(busy) return;
-    var dt = e.dataTransfer;
-    if(dt && dt.files && dt.files.length) handleFiles(dt.files);
-  });
-  // Prevent the browser from opening a dropped file if it misses the zone
-  window.addEventListener('dragover', function(e){ e.preventDefault(); });
-  window.addEventListener('drop', function(e){ e.preventDefault(); });
-
-  zipBtn.addEventListener('click', downloadZip);
-  clearBtn.addEventListener('click', clearAll);
-
-  refreshButtons();
 })();
 </script>
 </body>

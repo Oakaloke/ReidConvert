@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HEIC to JPG Converter — Free &amp; Private | ReidConvert</title>
+<meta name="description" content="Convert HEIC and HEIF photos from your iPhone to JPG online, free. Batch up to 10 files, choose JPG quality, download individually or as a ZIP. 100% private — files never leave your device.">
+<link rel="canonical" href="https://reidconvert.com/heic-to-jpg/">
+<meta name="theme-color" content="#01295D">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ReidConvert">
+<meta property="og:title" content="HEIC to JPG Converter — Free &amp; Private">
+<meta property="og:description" content="Convert iPhone HEIC photos to JPG in your browser. Batch, quality control, ZIP download. Files never leave your device.">
+<meta property="og:url" content="https://reidconvert.com/heic-to-jpg/">
+<meta property="og:image" content="https://reidconvert.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HEIC to JPG Converter — Free &amp; Private">
+<meta name="twitter:description" content="Convert iPhone HEIC photos to JPG in your browser. 100% private.">
+<meta name="twitter:image" content="https://reidconvert.com/assets/img/og.png">
+
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Is the HEIC to JPG converter free?","acceptedAnswer":{"@type":"Answer","text":"Yes. ReidConvert is completely free with no sign-up, no watermarks and no file limits per day."}},
+    {"@type":"Question","name":"Are my photos uploaded to a server?","acceptedAnswer":{"@type":"Answer","text":"No. Conversion happens entirely in your browser using JavaScript. Your photos never leave your device."}},
+    {"@type":"Question","name":"What is a HEIC file?","acceptedAnswer":{"@type":"Answer","text":"HEIC (High Efficiency Image Container) is the format iPhones and iPads use by default. It saves space but is not supported everywhere, so converting to JPG makes photos universally viewable."}}
+  ]
+}
+</script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script defer src="/assets/js/tools.js"></script>
+<script defer src="/assets/js/common.js"></script>
+</head>
+<body>
+<header id="site-header"></header>
+
+<main id="main">
+  <section class="tool-hero">
+    <div class="container">
+      <p class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/#tools">Tools</a> &rsaquo; HEIC to JPG</p>
+      <h1>HEIC to JPG Converter</h1>
+      <p class="lead">Turn iPhone HEIC &amp; HEIF photos into universal JPG images — free, fast and 100% private. Your photos are converted right here in your browser and never uploaded.</p>
+    </div>
+  </section>
+
+  <section class="app">
+    <div class="container app-wrap">
+      <!-- dropzone -->
+      <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Add HEIC files: drag and drop here, or press Enter to choose files">
+        <div class="ico" aria-hidden="true">📷</div>
+        <h2>Drag &amp; drop your HEIC photos</h2>
+        <p>or choose files from your device — up to 10 at a time (.heic, .heif)</p>
+        <button type="button" class="btn" id="pickBtn">Choose files</button>
+        <input type="file" id="fileInput" accept=".heic,.heif,image/heic,image/heif" multiple hidden>
+      </div>
+
+      <div class="notice warn" id="limitNotice" role="status" aria-live="polite"></div>
+
+      <!-- options + file list -->
+      <div class="panel" id="workPanel" hidden>
+        <div class="options">
+          <div class="field">
+            <label for="quality">JPG quality</label>
+            <div class="range-row">
+              <input type="range" id="quality" min="40" max="100" step="1" value="92" aria-describedby="qval">
+              <span class="range-val" id="qval">92%</span>
+            </div>
+          </div>
+          <div class="field" style="margin-left:auto">
+            <label aria-hidden="true">&nbsp;</label>
+            <button type="button" class="btn" id="convertBtn">Convert</button>
+          </div>
+        </div>
+
+        <ul class="filelist" id="fileList" aria-label="Files to convert" style="margin-top:8px"></ul>
+
+        <div class="overall" id="overall">
+          <div class="bar"><i id="overallFill"></i></div>
+          <p id="overallText">Ready.</p>
+        </div>
+
+        <div class="actions-row">
+          <button type="button" class="btn btn-gold" id="zipBtn" disabled>⬇ Download all as ZIP</button>
+          <button type="button" class="btn btn-ghost" id="resetBtn">Convert more files</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEO content -->
+  <section class="section section-soft">
+    <div class="container prose">
+      <h2>How to convert HEIC to JPG</h2>
+      <ol>
+        <li><strong>Add your photos.</strong> Drag HEIC files onto the box above, or tap “Choose files” to pick them from your phone or computer.</li>
+        <li><strong>Pick a quality.</strong> 92% is a great balance of sharpness and file size. Raise it for maximum detail, lower it for smaller files.</li>
+        <li><strong>Convert.</strong> Press Convert. Each photo is processed locally and shown with a Download button.</li>
+        <li><strong>Save.</strong> Download photos one by one, or grab them all at once in a ZIP.</li>
+      </ol>
+
+      <h2>Why convert HEIC to JPG?</h2>
+      <p>HEIC is Apple’s space-saving photo format, but many apps, websites and Windows programs still can’t open it. Converting to JPG makes your pictures viewable and shareable absolutely everywhere, while keeping excellent quality.</p>
+
+      <div class="faq" style="margin-top:28px">
+        <details open>
+          <summary>Is it really private?</summary>
+          <p>Yes. Everything runs inside your own browser with JavaScript. No photo is ever sent to a server — there is nothing to upload and nothing stored online.</p>
+        </details>
+        <details>
+          <summary>How many files can I convert at once?</summary>
+          <p>Up to 10 per batch to keep things fast and responsive. When you’re done, press “Convert more files” and add the next batch — there’s no daily limit.</p>
+        </details>
+        <details>
+          <summary>My HEIC file contains several photos (a burst or Live Photo). What happens?</summary>
+          <p>Some HEIC files hold more than one image. ReidConvert exports each one as a separate JPG, named <code>photo-1.jpg</code>, <code>photo-2.jpg</code>, and so on.</p>
+        </details>
+        <details>
+          <summary>Does it work on iPhone and iPad?</summary>
+          <p>Yes — it’s fully responsive and works in Safari on iOS, as well as Chrome, Edge and Firefox on desktop.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script>
+(function () {
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    var RC = window.RC;
+    var MAX = 10;
+
+    var dropzone = document.getElementById('dropzone');
+    var fileInput = document.getElementById('fileInput');
+    var pickBtn = document.getElementById('pickBtn');
+    var limitNotice = document.getElementById('limitNotice');
+    var workPanel = document.getElementById('workPanel');
+    var fileListEl = document.getElementById('fileList');
+    var quality = document.getElementById('quality');
+    var qval = document.getElementById('qval');
+    var convertBtn = document.getElementById('convertBtn');
+    var zipBtn = document.getElementById('zipBtn');
+    var resetBtn = document.getElementById('resetBtn');
+    var overall = document.getElementById('overall');
+    var overallFill = document.getElementById('overallFill');
+    var overallText = document.getElementById('overallText');
+
+    var items = [];   // {id, file, status, outputs:[{name,blob,url}], el, error}
+    var nextId = 1;
+    var converting = false;
+
+    quality.addEventListener('input', function () { qval.textContent = quality.value + '%'; });
+
+    pickBtn.addEventListener('click', function (e) { e.stopPropagation(); fileInput.click(); });
+
+    function isHeic(file) {
+      var ext = RC.extOf(file.name);
+      return file.type === 'image/heic' || file.type === 'image/heif' || ext === 'heic' || ext === 'heif';
+    }
+
+    function showLimit(msg, kind) {
+      limitNotice.textContent = msg;
+      limitNotice.className = 'notice ' + (kind || 'warn') + ' show';
+    }
+    function clearLimit() { limitNotice.className = 'notice'; limitNotice.textContent = ''; }
+
+    function addFiles(files) {
+      clearLimit();
+      var heics = files.filter(isHeic);
+      var rejected = files.length - heics.length;
+
+      var room = MAX - items.length;
+      var toAdd = heics;
+      var trimmed = false;
+      if (heics.length > room) { toAdd = heics.slice(0, Math.max(0, room)); trimmed = true; }
+
+      toAdd.forEach(function (file) {
+        var item = { id: nextId++, file: file, status: 'waiting', outputs: [], error: null, el: null };
+        items.push(item);
+        renderItem(item);
+      });
+
+      if (items.length) { workPanel.hidden = false; }
+
+      var notes = [];
+      if (rejected > 0) notes.push(rejected + ' non-HEIC file' + (rejected > 1 ? 's were' : ' was') + ' skipped (only .heic/.heif are supported here).');
+      if (trimmed) notes.push('Only the first ' + MAX + ' files are kept per batch — convert these, then add more.');
+      if (notes.length) showLimit(notes.join(' '), 'warn');
+
+      updateButtons();
+    }
+
+    function renderItem(item) {
+      var li = document.createElement('li');
+      li.className = 'file-item';
+      li.innerHTML =
+        '<div class="file-thumb" aria-hidden="true">HEIC</div>' +
+        '<div class="file-main">' +
+          '<div class="file-name"></div>' +
+          '<div class="file-meta"><span class="sz"></span><span class="status waiting">Waiting</span></div>' +
+        '</div>' +
+        '<div class="file-actions"></div>';
+      li.querySelector('.file-name').textContent = item.file.name;
+      li.querySelector('.sz').textContent = RC.humanSize(item.file.size);
+      fileListEl.appendChild(li);
+      item.el = li;
+      renderActions(item);
+    }
+
+    function renderActions(item) {
+      var wrap = item.el.querySelector('.file-actions');
+      wrap.innerHTML = '';
+      if (item.status === 'waiting') {
+        var rm = document.createElement('button');
+        rm.type = 'button'; rm.className = 'icon-btn'; rm.setAttribute('aria-label', 'Remove ' + item.file.name);
+        rm.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>';
+        rm.addEventListener('click', function () { removeItem(item); });
+        wrap.appendChild(rm);
+      } else if (item.status === 'converting') {
+        var sp = document.createElement('div'); sp.className = 'spin'; sp.setAttribute('role', 'img'); sp.setAttribute('aria-label', 'Converting');
+        wrap.appendChild(sp);
+      } else if (item.status === 'done') {
+        item.outputs.forEach(function (out) {
+          var a = document.createElement('a');
+          a.className = 'dl-link'; a.href = out.url; a.download = out.name;
+          a.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 21h14" stroke-linecap="round"/></svg> ' +
+            (item.outputs.length > 1 ? RC.escapeHtml(out.name) : 'Download');
+          wrap.appendChild(a);
+        });
+      }
+    }
+
+    function setStatus(item, status, label) {
+      item.status = status;
+      var badge = item.el.querySelector('.status');
+      badge.className = 'status ' + status;
+      badge.textContent = label || (status.charAt(0).toUpperCase() + status.slice(1));
+      renderActions(item);
+    }
+
+    function removeItem(item) {
+      item.outputs.forEach(function (o) { URL.revokeObjectURL(o.url); });
+      items = items.filter(function (x) { return x !== item; });
+      if (item.el) item.el.remove();
+      if (!items.length) { workPanel.hidden = true; overall.classList.remove('show'); clearLimit(); }
+      updateButtons();
+    }
+
+    function updateButtons() {
+      var anyDone = items.some(function (i) { return i.status === 'done'; });
+      zipBtn.disabled = !anyDone || converting;
+      var anyWaiting = items.some(function (i) { return i.status === 'waiting'; });
+      convertBtn.disabled = !anyWaiting || converting;
+      pickBtn.disabled = converting;
+    }
+
+    function loadImage(blob) {
+      return new Promise(function (resolve, reject) {
+        var url = URL.createObjectURL(blob);
+        var img = new Image();
+        img.onload = function () { URL.revokeObjectURL(url); resolve(img); };
+        img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('Could not read the decoded image.')); };
+        img.src = url;
+      });
+    }
+
+    function encodeJpg(img) {
+      var canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || img.width;
+      canvas.height = img.naturalHeight || img.height;
+      var ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      var q = parseInt(quality.value, 10) / 100;
+      return new Promise(function (resolve, reject) {
+        canvas.toBlob(function (blob) {
+          if (blob) resolve(blob); else reject(new Error('The browser could not encode a JPG.'));
+        }, 'image/jpeg', q);
+      });
+    }
+
+    function uniqueName(base) {
+      var taken = {};
+      items.forEach(function (i) { i.outputs.forEach(function (o) { taken[o.name.toLowerCase()] = true; }); });
+      if (!taken[base.toLowerCase()]) return base;
+      var dot = base.lastIndexOf('.');
+      var stem = dot > 0 ? base.slice(0, dot) : base;
+      var ext = dot > 0 ? base.slice(dot) : '';
+      var n = 2;
+      while (taken[(stem + '-' + n + ext).toLowerCase()]) n++;
+      return stem + '-' + n + ext;
+    }
+
+    async function convertItem(item) {
+      setStatus(item, 'converting', 'Converting');
+      var stem = RC.baseName(item.file.name);
+      try {
+        var out = await heic2any({ blob: item.file, toType: 'image/jpeg', quality: 0.95 });
+        var blobs = Array.isArray(out) ? out : [out];
+        for (var j = 0; j < blobs.length; j++) {
+          var img = await loadImage(blobs[j]);
+          var jpg = await encodeJpg(img);
+          var name = uniqueName(stem + (blobs.length > 1 ? ('-' + (j + 1)) : '') + '.jpg');
+          var url = URL.createObjectURL(jpg);
+          item.outputs.push({ name: name, blob: jpg, url: url });
+        }
+        // thumbnail preview from first output
+        if (item.outputs.length) {
+          var th = item.el.querySelector('.file-thumb');
+          th.textContent = '';
+          th.style.backgroundImage = 'url("' + item.outputs[0].url + '")';
+        }
+        var total = item.outputs.reduce(function (s, o) { return s + o.blob.size; }, 0);
+        item.el.querySelector('.sz').textContent = RC.humanSize(item.file.size) + ' → ' + RC.humanSize(total);
+        setStatus(item, 'done', item.outputs.length > 1 ? ('Done · ' + item.outputs.length + ' images') : 'Done');
+      } catch (e) {
+        item.error = (e && e.message) ? e.message : 'Conversion failed';
+        setStatus(item, 'error', 'Error');
+        var meta = item.el.querySelector('.file-meta');
+        var em = document.createElement('span');
+        em.style.color = 'var(--err)'; em.style.fontWeight = '600';
+        em.textContent = 'Could not convert — the file may be corrupt or not a real HEIC.';
+        meta.appendChild(em);
+      }
+    }
+
+    async function convertAll() {
+      if (converting) return;
+      var queue = items.filter(function (i) { return i.status === 'waiting'; });
+      if (!queue.length) return;
+      converting = true;
+      updateButtons();
+      overall.classList.add('show');
+
+      for (var i = 0; i < queue.length; i++) {
+        overallFill.style.width = Math.round(i / queue.length * 100) + '%';
+        overallText.textContent = 'Converting ' + (i + 1) + ' of ' + queue.length + '…';
+        await convertItem(queue[i]);
+        updateButtons();
+      }
+      overallFill.style.width = '100%';
+      var okCount = items.filter(function (x) { return x.status === 'done'; }).length;
+      var errCount = items.filter(function (x) { return x.status === 'error'; }).length;
+      overallText.textContent = 'Finished — ' + okCount + ' converted' + (errCount ? (', ' + errCount + ' failed') : '') + '.';
+      converting = false;
+      updateButtons();
+    }
+
+    function collectOutputs() {
+      var files = [];
+      items.forEach(function (i) { i.outputs.forEach(function (o) { files.push({ name: o.name, blob: o.blob }); }); });
+      return files;
+    }
+
+    zipBtn.addEventListener('click', function () {
+      var files = collectOutputs();
+      if (!files.length) return;
+      var prev = zipBtn.textContent;
+      zipBtn.disabled = true; zipBtn.textContent = 'Zipping…';
+      RC.zipAndDownload(files, 'reidconvert-' + RC.todayStr() + '.zip').then(function () {
+        zipBtn.textContent = prev; zipBtn.disabled = false;
+      }, function () {
+        zipBtn.textContent = prev; zipBtn.disabled = false;
+      });
+    });
+
+    resetBtn.addEventListener('click', function () {
+      items.forEach(function (i) { i.outputs.forEach(function (o) { URL.revokeObjectURL(o.url); }); });
+      items = [];
+      fileListEl.innerHTML = '';
+      workPanel.hidden = true;
+      overall.classList.remove('show');
+      overallFill.style.width = '0';
+      clearLimit();
+      updateButtons();
+    });
+
+    convertBtn.addEventListener('click', convertAll);
+    RC.setupDropzone(dropzone, addFiles, { inputEl: fileInput });
+  });
+})();
+</script>
+</body>
+</html>
