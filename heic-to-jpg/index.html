@@ -305,16 +305,57 @@
       return stem + '-' + n + ext;
     }
 
+    // Reject if a promise hasn't settled within `ms` (turns a hang into a clear error)
+    function withTimeout(promise, ms, msg) {
+      return new Promise(function (resolve, reject) {
+        var t = setTimeout(function () { reject(new Error(msg)); }, ms);
+        promise.then(
+          function (v) { clearTimeout(t); resolve(v); },
+          function (e) { clearTimeout(t); reject(e); }
+        );
+      });
+    }
+
+    function friendlyHeicError(e) {
+      var m = (e && e.message) ? e.message : '';
+      if (/too long/i.test(m)) return m;
+      if (/memory|allocat|out of/i.test(m)) return 'This HEIC photo is too large for the browser to decode. Try a smaller image.';
+      return 'Could not convert — the file may be corrupt or not a real HEIC.';
+    }
+
+    // HEIC/HEIF -> one or more HTMLImageElements.
+    // 1) Try the browser's native decoder first — Safari & iOS decode HEIC directly
+    //    (fast, memory-safe, applies EXIF orientation automatically).
+    // 2) Fall back to heic2any (libheif) for Chrome/Firefox/Edge, guarded by a
+    //    timeout and friendly error messages.
+    function decodeToImages(file) {
+      return loadImage(file).then(function (img) {
+        return [img]; // native decode succeeded (Safari / iOS)
+      }, function () {
+        if (typeof heic2any !== 'function') {
+          throw new Error('The HEIC decoder failed to load — check your connection and refresh.');
+        }
+        return withTimeout(
+          heic2any({ blob: file, toType: 'image/jpeg', quality: 0.95 }),
+          90000,
+          'This HEIC file took too long to decode (it may be very large).'
+        ).then(function (out) {
+          var blobs = Array.isArray(out) ? out : [out];
+          return Promise.all(blobs.map(loadImage));
+        }).catch(function (e) {
+          throw new Error(friendlyHeicError(e));
+        });
+      });
+    }
+
     async function convertItem(item) {
       setStatus(item, 'converting', 'Converting');
       var stem = RC.baseName(item.file.name);
       try {
-        var out = await heic2any({ blob: item.file, toType: 'image/jpeg', quality: 0.95 });
-        var blobs = Array.isArray(out) ? out : [out];
-        for (var j = 0; j < blobs.length; j++) {
-          var img = await loadImage(blobs[j]);
-          var jpg = await encodeJpg(img);
-          var name = uniqueName(stem + (blobs.length > 1 ? ('-' + (j + 1)) : '') + '.jpg');
+        var imgs = await decodeToImages(item.file);
+        for (var j = 0; j < imgs.length; j++) {
+          var jpg = await encodeJpg(imgs[j]);
+          var name = uniqueName(stem + (imgs.length > 1 ? ('-' + (j + 1)) : '') + '.jpg');
           var url = URL.createObjectURL(jpg);
           item.outputs.push({ name: name, blob: jpg, url: url });
         }
@@ -333,7 +374,7 @@
         var meta = item.el.querySelector('.file-meta');
         var em = document.createElement('span');
         em.style.color = 'var(--err)'; em.style.fontWeight = '600';
-        em.textContent = 'Could not convert — the file may be corrupt or not a real HEIC.';
+        em.textContent = item.error;
         meta.appendChild(em);
       }
     }
