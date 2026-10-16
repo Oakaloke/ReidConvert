@@ -438,3 +438,29 @@ body.cv-modal-open { overflow: hidden; }
   .cv-switch-track, .cv-switch-dot, .cv-drop, .spin, .bar > i { transition: none !important; animation: none !important; }
   .spin { animation: rc-spin 1.2s linear infinite !important; }
 }
+
+/* ============================================================
+   Document workspace extras (doc-convert-core.js) — additive
+   ============================================================ */
+/* overall progress bar under the toolbar */
+.cv-overall { margin: 0 2px 14px; }
+.cv-overall-bar { height: 8px; background: #e7ecf4; border-radius: 999px; overflow: hidden; }
+.cv-overall-bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--navy), #2f66b8); transition: width .25s ease; }
+.cv-overall p { margin: 7px 2px 0; font-size: .86rem; color: var(--muted); font-weight: 600; }
+
+/* per-file progress (lives inside .cv-sub, breaks to its own line) */
+.cv-prog { flex-basis: 100%; display: block; margin-top: 7px; }
+.cv-prog-bar { height: 6px; background: #e7ecf4; border-radius: 999px; overflow: hidden; }
+.cv-prog-bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--navy), #2f66b8); transition: width .2s ease; }
+.cv-prog-label { display: block; font-size: .8rem; color: var(--navy-700); font-weight: 600; margin-top: 4px; }
+
+/* options: select + stacked field + subscription teaser */
+.cv-field-col { display: flex; flex-direction: column; gap: 6px; font-size: .9rem; font-weight: 600; color: var(--ink); }
+.cv-select { font: inherit; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff;
+  color: var(--ink); max-width: 260px; cursor: pointer; }
+.cv-upsell { background: var(--bg-soft); border-radius: var(--radius-sm); margin-top: 6px; padding: 16px 16px 14px; border-top: 0; }
+.cv-upsell h3 { color: var(--gold-600); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cv-overall-bar > i, .cv-prog-bar > i { transition: none !important; }
+}

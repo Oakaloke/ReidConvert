@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF to Word Converter — Free &amp; Private | ReidConvert</title>
+<meta name="description" content="Convert PDF to editable Word (.docx) online, free. Digital PDFs keep their real text; scanned PDFs are read with built-in OCR. Batch convert, download individually or as a ZIP. 100% private — nothing is uploaded.">
+<link rel="canonical" href="https://reidconvert.com/pdf-to-word/">
+<meta name="theme-color" content="#01295D">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ReidConvert">
+<meta property="og:title" content="PDF to Word Converter — Free &amp; Private">
+<meta property="og:description" content="Turn PDFs into editable Word documents right in your browser. Keeps real text, OCRs scanned pages, batch + ZIP. Files never leave your device.">
+<meta property="og:url" content="https://reidconvert.com/pdf-to-word/">
+<meta property="og:image" content="https://reidconvert.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PDF to Word Converter — Free &amp; Private">
+<meta name="twitter:description" content="Convert PDF to editable Word (.docx) in your browser. Scanned pages read with OCR. 100% private.">
+<meta name="twitter:image" content="https://reidconvert.com/assets/img/og.png">
+
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Is the PDF to Word converter free?","acceptedAnswer":{"@type":"Answer","text":"Yes. ReidConvert is completely free with no sign-up, no watermarks and no file limits per day."}},
+    {"@type":"Question","name":"Are my PDFs uploaded to a server?","acceptedAnswer":{"@type":"Answer","text":"No. Conversion happens entirely in your browser using JavaScript. Your PDFs never leave your device. Only the open-source OCR language model is downloaded once from a public CDN so recognition can run locally."}},
+    {"@type":"Question","name":"Can it convert scanned PDFs?","acceptedAnswer":{"@type":"Answer","text":"Yes. ReidConvert detects pages that are scans or images and reads them with built-in OCR (optical character recognition), so you get editable text even from scanned documents. Digital PDFs keep their original, exact text."}},
+    {"@type":"Question","name":"Will the Word file open in Microsoft Word and Google Docs?","acceptedAnswer":{"@type":"Answer","text":"Yes. The converter produces a standard .docx file that opens cleanly in Microsoft Word, Google Docs and LibreOffice, with selectable, editable text and page breaks between pages."}},
+    {"@type":"Question","name":"Can I convert several PDFs at once?","acceptedAnswer":{"@type":"Answer","text":"Yes. Add multiple PDFs and each becomes its own Word document. Download them individually or grab them all at once as a ZIP."}}
+  ]
+}
+</script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script defer src="/assets/js/tools.js"></script>
+<script defer src="/assets/js/common.js"></script>
+<script defer src="/assets/js/doc-convert-core.js"></script>
+</head>
+<body>
+<header id="site-header"></header>
+
+<main id="main">
+  <section class="tool-hero">
+    <div class="container">
+      <p class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/#tools">Tools</a> &rsaquo; PDF to Word</p>
+      <h1>PDF to Word Converter</h1>
+      <p class="lead">Drop a PDF and get a fully editable Word document — free, fast and 100% private. Digital PDFs keep their real text; scanned pages are read automatically with built-in OCR. Everything happens right here in your browser and nothing is ever uploaded.</p>
+    </div>
+  </section>
+
+  <section class="app">
+    <div class="container app-wrap">
+      <div id="workspace"></div>
+    </div>
+  </section>
+
+  <!-- SEO content -->
+  <section class="section section-soft">
+    <div class="container prose">
+      <h2>How to convert PDF to Word</h2>
+      <ol>
+        <li><strong>Add your PDFs.</strong> Drag PDF files onto the box above, or tap “Choose files” to pick them from your phone or computer.</li>
+        <li><strong>Let it convert.</strong> Each PDF converts automatically. Pages with real text are extracted exactly; scanned or image pages are read with OCR. Want to pick an OCR language or quality? Open <strong>Options</strong>.</li>
+        <li><strong>Download.</strong> Save each Word file with its Download button, or grab them all at once as a ZIP. Open the result in Microsoft Word, Google Docs or LibreOffice and edit away.</li>
+      </ol>
+
+      <h2>Smart text + OCR, automatically</h2>
+      <p>Most PDF-to-Word tools either ruin a clean digital PDF by running OCR on everything, or fail completely on scans. ReidConvert checks each page: if it already contains genuine, selectable text, that exact text is used for the cleanest possible result. If a page is a scan or an image, it is rendered and read with optical character recognition. Mixed documents — some typed pages, some scanned — are handled page by page.</p>
+
+      <div class="faq" style="margin-top:28px">
+        <details open>
+          <summary>Is it really private?</summary>
+          <p>Yes. Everything runs inside your own browser with JavaScript. Your PDF is never sent to a server — there is nothing to upload and nothing stored online. The only thing downloaded is the open-source OCR language model (once), so recognition can run locally on your device.</p>
+        </details>
+        <details>
+          <summary>Does it work on scanned documents?</summary>
+          <p>Yes. ReidConvert detects pages that have little or no real text and reads them with built-in OCR, so you get editable words even from a scan or a photographed page. Choose the recognition language and quality under <strong>Options</strong>.</p>
+        </details>
+        <details>
+          <summary>Will the formatting be perfect?</summary>
+          <p>The converter focuses on getting your text out cleanly and editably, with sensible paragraphs and a page break between pages. Complex multi-column layouts, tables and exact styling may be simplified — you get text you can work with rather than a pixel-perfect clone. OCR accuracy depends on the quality of the scan.</p>
+        </details>
+        <details>
+          <summary>Can it open password-protected PDFs?</summary>
+          <p>Not yet — encrypted or password-protected PDFs can’t be read without the password, so the converter will let you know and skip the file. Remove the protection first, then convert.</p>
+        </details>
+        <details>
+          <summary>Does it work on iPhone and iPad?</summary>
+          <p>Yes — it’s fully responsive and works in Safari on iOS, as well as Chrome, Edge and Firefox on desktop. Large scanned documents take longer on a phone because OCR is doing real work on your device.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script>
+(function () {
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    var RC = window.RC;
+    var mount = document.getElementById('workspace');
+    if (!RC || !RC.createDocWorkspace || !mount) return;
+
+    var PDFJS_BASE = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/';
+
+    /* ---- genuine PDF magic-byte check ("%PDF" within the first bytes) ---- */
+    function sniffPdf(bytes) {
+      if (!bytes || bytes.length < 5) return null;
+      for (var i = 0; i + 3 < bytes.length && i < 20; i++) {
+        if (bytes[i] === 0x25 && bytes[i+1] === 0x50 && bytes[i+2] === 0x44 && bytes[i+3] === 0x46) return true; // %PDF
+      }
+      return null; // unknown — let pdf.js be the authority and give a friendly error
+    }
+
+    function openPdf(pdfjsLib, data) {
+      return pdfjsLib.getDocument({
+        data: data,
+        cMapUrl: PDFJS_BASE + 'cmaps/',
+        cMapPacked: true,
+        standardFontDataUrl: PDFJS_BASE + 'standard_fonts/',
+        isEvalSupported: false
+      }).promise;
+    }
+    function friendlyPdfError(err) {
+      var name = (err && err.name) || '';
+      var msg = (err && err.message) || '';
+      if (name === 'PasswordException' || /password/i.test(msg)) return 'This PDF is password-protected. Remove the password first, then convert it.';
+      if (name === 'InvalidPDFException' || /invalid|corrupt/i.test(msg)) return 'This PDF appears to be damaged or isn’t a valid PDF file.';
+      if (/memory|allocat|out of/i.test(msg)) return 'This PDF is too large for the browser to process. Try a smaller file or split it first.';
+      return 'This PDF could not be read. It may be damaged or use an unsupported feature.';
+    }
+
+    /* ---- text-layer extraction → clean paragraphs (preserves paragraph structure) ---- */
+    function paragraphsFromTextContent(tc) {
+      var items = (tc.items || []).filter(function (it) { return it.str && it.str.length; });
+      if (!items.length) return [];
+      var lines = [];
+      items.forEach(function (it) {
+        var tr = it.transform || [1,0,0,1,0,0];
+        var x = tr[4], y = tr[5], h = Math.abs(tr[3]) || it.height || 10;
+        var line = null;
+        for (var i = lines.length - 1; i >= 0 && i >= lines.length - 5; i--) {
+          if (Math.abs(lines[i].y - y) <= Math.max(2, h * 0.5)) { line = lines[i]; break; }
+        }
+        if (!line) { line = { y: y, h: h, parts: [] }; lines.push(line); }
+        line.parts.push({ x: x, w: it.width || 0, str: it.str });
+        if (h > line.h) line.h = h;
+      });
+      lines.sort(function (a, b) { return b.y - a.y; }); // top → bottom
+      var lineObjs = lines.map(function (line) {
+        line.parts.sort(function (a, b) { return a.x - b.x; });
+        var text = '', prevEnd = null;
+        line.parts.forEach(function (p) {
+          if (prevEnd !== null) {
+            var gap = p.x - prevEnd;
+            var approxSpace = (p.w && p.str.length) ? (p.w / p.str.length) : (line.h * 0.28);
+            if (gap > approxSpace * 0.55 && !/\s$/.test(text) && !/^\s/.test(p.str)) text += ' ';
+          }
+          text += p.str;
+          prevEnd = p.x + (p.w || 0);
+        });
+        return { y: line.y, h: line.h, text: text.replace(/\s+/g, ' ').trim() };
+      }).filter(function (l) { return l.text.length; });
+      if (!lineObjs.length) return [];
+      var hs = lineObjs.map(function (l) { return l.h; }).sort(function (a, b) { return a - b; });
+      var medH = hs[Math.floor(hs.length / 2)] || 12;
+      var paras = [], cur = lineObjs[0].text;
+      for (var i = 1; i < lineObjs.length; i++) {
+        var gap = lineObjs[i-1].y - lineObjs[i].y;
+        if (gap > medH * 1.7) { paras.push(cur); cur = lineObjs[i].text; }
+        else { cur += ' ' + lineObjs[i].text; }
+      }
+      paras.push(cur);
+      return paras.filter(function (p) { return p && p.trim().length; });
+    }
+    function meaningfulChars(paras) {
+      var joined = paras.join(' ');
+      var letters = joined.replace(/[^A-Za-z0-9À-ɏͰ-ϿЀ-ӿ]/g, '');
+      return letters.length;
+    }
+
+    /* ---- OCR text → paragraphs ---- */
+    function paragraphsFromOcr(text) {
+      if (!text) return [];
+      return text.replace(/\r/g, '').split(/\n{2,}/).map(function (block) {
+        return block.split('\n').map(function (s) { return s.trim(); }).filter(Boolean).join(' ').trim();
+      }).filter(function (p) { return p.length; });
+    }
+
+    /* ---- render a PDF page to a canvas at a given scale (for OCR / thumbnails) ---- */
+    function renderPageToCanvas(page, scale) {
+      var viewport = page.getViewport({ scale: scale });
+      var canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.floor(viewport.width));
+      canvas.height = Math.max(1, Math.floor(viewport.height));
+      var ctx = canvas.getContext('2d', { alpha: false });
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      return page.render({ canvasContext: ctx, viewport: viewport, background: '#ffffff' }).promise.then(function () { return canvas; });
+    }
+
+    /* ---- build a .docx blob from page paragraph groups ---- */
+    function buildDocxBlob(docx, pages) {
+      var children = [];
+      pages.forEach(function (paras, pi) {
+        if (pi > 0) children.push(new docx.Paragraph({ children: [ new docx.PageBreak() ] }));
+        if (!paras.length) { children.push(new docx.Paragraph({ text: '' })); return; }
+        paras.forEach(function (text) {
+          children.push(new docx.Paragraph({ children: [ new docx.TextRun({ text: text }) ], spacing: { after: 160 } }));
+        });
+      });
+      if (!children.length) children.push(new docx.Paragraph({ text: '' }));
+      var doc = new docx.Document({
+        creator: 'ReidConvert',
+        description: 'Converted from PDF with ReidConvert',
+        title: 'Converted document',
+        styles: { default: { document: { run: { font: 'Calibri', size: 22 } } } },
+        sections: [ { properties: {}, children: children } ]
+      });
+      return docx.Packer.toBlob(doc);
+    }
+
+    RC.createDocWorkspace(mount, {
+      key: 'pdf-to-word',
+      inputLabel: 'PDF',
+      outputLabel: 'Word',
+      outputExt: 'docx',
+      outputMime: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      accept: ['pdf'],
+      acceptMime: ['application/pdf'],
+      ocr: true,
+      sniff: sniffPdf,
+
+      /* lightweight metadata + thumbnail for the file row (best-effort) */
+      analyze: function (file, ctx) {
+        return ctx.libs.ensurePdfjs().then(function (pdfjsLib) {
+          return file.arrayBuffer().then(function (buf) {
+            return openPdf(pdfjsLib, new Uint8Array(buf)).then(function (pdf) {
+              var pages = pdf.numPages;
+              return pdf.getPage(1).then(function (page) {
+                var vp = page.getViewport({ scale: 1 });
+                var scale = Math.min(0.5, 150 / vp.width);
+                return renderPageToCanvas(page, scale).then(function (canvas) {
+                  var thumbUrl = canvas.toDataURL('image/jpeg', 0.7);
+                  canvas.width = canvas.height = 0;
+                  try { pdf.destroy(); } catch (e) {}
+                  return { pages: pages, thumbUrl: thumbUrl };
+                });
+              }).catch(function () { try { pdf.destroy(); } catch (e) {} return { pages: pages }; });
+            });
+          });
+        });
+      },
+
+      /* the real conversion */
+      convert: function (item, ctx) {
+        var pdfjsLib, docx;
+        return Promise.all([ ctx.libs.ensurePdfjs(), ctx.libs.ensureDocx() ]).then(function (libs) {
+          pdfjsLib = libs[0]; docx = libs[1];
+          ctx.onProgress(0.03, 'Opening PDF…');
+          return item.file.arrayBuffer();
+        }).then(function (buf) {
+          return openPdf(pdfjsLib, new Uint8Array(buf));
+        }).catch(function (err) {
+          throw new Error(friendlyPdfError(err));
+        }).then(function (pdf) {
+          var numPages = pdf.numPages;
+          if (numPages > ctx.tier.maxPagesPerFile) {
+            try { pdf.destroy(); } catch (e) {}
+            throw new Error('This PDF has ' + numPages + ' pages, which is above the current ' + ctx.tier.maxPagesPerFile + '-page limit. Split it into smaller files and convert those.');
+          }
+          var pages = [];
+          var scale = ctx.dpiScale();
+
+          function processPage(i) {
+            ctx.throwIfAborted();
+            if (i > numPages) return Promise.resolve();
+            var pageFrac = (i - 1) / numPages;
+            return pdf.getPage(i).then(function (page) {
+              return page.getTextContent().then(function (tc) {
+                var textParas = ctx.settings.preferText ? paragraphsFromTextContent(tc) : [];
+                var hasRealText = ctx.settings.preferText && meaningfulChars(textParas) >= 8;
+                if (hasRealText) {
+                  ctx.onProgress((i) / numPages, 'Reading page ' + i + ' of ' + numPages + '…');
+                  pages.push(textParas);
+                  try { page.cleanup(); } catch (e) {}
+                  return processPage(i + 1);
+                }
+                // scanned / image page → OCR
+                ctx.onProgress(pageFrac + 0.02 / numPages, 'Rendering page ' + i + ' of ' + numPages + ' for OCR…');
+                return renderPageToCanvas(page, scale).then(function (canvas) {
+                  return ctx.ocrRecognize(canvas, function (p) {
+                    ctx.onProgress((i - 1 + p) / numPages, 'Reading scanned page ' + i + ' of ' + numPages + ' (' + Math.round(p * 100) + '%)…');
+                  }).then(function (text) {
+                    canvas.width = canvas.height = 0; // release memory
+                    pages.push(paragraphsFromOcr(text));
+                    try { page.cleanup(); } catch (e) {}
+                    ctx.onProgress(i / numPages, 'Finished page ' + i + ' of ' + numPages + '…');
+                    return processPage(i + 1);
+                  });
+                });
+              });
+            });
+          }
+
+          return processPage(1).then(function () {
+            ctx.throwIfAborted();
+            ctx.onProgress(0.98, 'Building Word document…');
+            return buildDocxBlob(docx, pages);
+          }).then(function (blob) {
+            try { pdf.destroy(); } catch (e) {}
+            var base = RC.baseName(item.file.name) || 'document';
+            return [ { name: base + '.docx', blob: blob } ];
+          }, function (err) {
+            try { pdf.destroy(); } catch (e) {}
+            throw err;
+          });
+        });
+      }
+    }, {});
+  });
+})();
+</script>
+</body>
+</html>

@@ -67,6 +67,35 @@ Low-level helpers on `window.RC` (`humanSize`, `baseName`, `extOf`, `downloadBlo
 `zipAndDownload`, `todayStr`, `escapeHtml`, `setupDropzone`) remain available if you
 ever need to build something bespoke.
 
+## Document converters (PDF → Word, etc.)
+
+Image tools use `convert-core.js` (decode → canvas encode). **Document** tools use the
+sibling **`assets/js/doc-convert-core.js`** and `RC.createDocWorkspace(mount, engine, opts)`.
+It renders the exact same `.cv-*` workspace (drop zone, toolbar, auto-convert, rows,
+selection, downloads, ZIP, options modal) but adds per-file + overall **progress bars**,
+lazy on-demand loading of heavy libraries (pdf.js, tesseract.js, docx) and built-in **OCR
+worker** management — so the engine just supplies the pipeline:
+
+```js
+RC.createDocWorkspace(mount, {
+  key: 'pdf-to-word', inputLabel: 'PDF', outputLabel: 'Word',
+  outputExt: 'docx', outputMime: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  accept: ['pdf'], acceptMime: ['application/pdf'], ocr: true,
+  sniff:   bytes => /* magic-byte check */ ,
+  analyze: (file, ctx) => Promise.resolve({ pages, thumbUrl }),   // optional row metadata
+  convert: (item, ctx) => Promise.resolve([{ name, blob }])        // required: returns output blob(s)
+});
+```
+
+`ctx` gives the engine everything it needs: `settings`, `tier` (limits), `libs.ensurePdfjs()`
+/`ensureDocx()`, `ocrRecognize(canvas, onProgress)` (lazy Tesseract), `dpiScale()`,
+`onProgress(frac, label)` and `throwIfAborted()`. See `/pdf-to-word/index.html` for the
+reference pipeline (per-page "real text vs OCR" detection, page breaks, friendly errors).
+
+**Future paid tiers:** limits live in the `TIERS` map at the top of `doc-convert-core.js`
+(`maxFiles`, `maxBytes`, `maxPagesPerFile`, `concurrency`, `ocrLanguages`, `dpiPresets`).
+Add a `pro` object and point `RC.docTier` at it — no pipeline changes needed.
+
 ## 3. Add to the sitemap
 
 Add a `<url>` entry for the new page in `sitemap.xml`.

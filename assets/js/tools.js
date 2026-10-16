@@ -27,6 +27,17 @@ window.RC_TOOLS = [
     accept: ['heic', 'heif']
   },
   {
+    key: 'pdf-to-word',
+    name: 'PDF to Word',
+    from: 'PDF',
+    to: 'Word',
+    url: '/pdf-to-word/',
+    desc: 'Turn PDFs into editable Word documents — keeps real text, OCRs scans.',
+    category: 'Document',
+    status: 'live',
+    accept: ['pdf']
+  },
+  {
     key: 'png-to-jpg',
     name: 'PNG to JPG',
     from: 'PNG',
