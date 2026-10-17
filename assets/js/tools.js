@@ -38,6 +38,18 @@ window.RC_TOOLS = [
     accept: ['pdf']
   },
   {
+    key: 'pdf-to-jpg',
+    name: 'PDF to JPG',
+    from: 'PDF',
+    to: 'JPG',
+    url: '/pdf-to-jpg/',
+    desc: 'Turn every page of a PDF into a high-quality JPG image.',
+    category: 'Document',
+    status: 'live'
+    // no `accept`: homepage PDF drops route to PDF→Word (the established tool);
+    // reach this tool from the grid/nav until a multi-match chooser exists.
+  },
+  {
     key: 'png-to-jpg',
     name: 'PNG to JPG',
     from: 'PNG',
