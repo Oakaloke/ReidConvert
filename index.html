@@ -40,12 +40,12 @@
         <img src="/assets/img/logo.png" alt="ReidConvert" width="364" height="273" decoding="async">
       </a>
       <h1>Convert your files in seconds — privately.</h1>
-      <p class="sub">Fast, free, browser-based converters. Drop a file below and ReidConvert sends it straight to the right tool. Nothing is ever uploaded.</p>
+      <p class="sub">Images, PDFs, video, audio and more. Drop any file and ReidConvert automatically sends it to the right converter — all in your browser, so nothing is ever uploaded.</p>
 
       <div class="hero-drop" id="heroDrop" role="button" tabindex="0" aria-label="Drop a file to convert, or press Enter to choose a file">
         <div class="ico" aria-hidden="true">☁️</div>
-        <p><strong>Drag &amp; drop a file to get started</strong></p>
-        <p class="hint">We'll route it to the right converter. iPhone HEIC photos go to HEIC&nbsp;to&nbsp;JPG.</p>
+        <p><strong>Drag &amp; drop any file to get started</strong></p>
+        <p class="hint">Photos, PDFs, video, audio and more — we'll route it to the right converter for you, automatically.</p>
         <button type="button" class="btn btn-gold" id="heroPick">Choose a file</button>
         <input type="file" id="heroInput" hidden>
       </div>
@@ -66,9 +66,9 @@
       <div class="section-head">
         <p class="eyebrow">Converters</p>
         <h2>Pick a tool</h2>
-        <p>More converters are on the way. HEIC to JPG is live now.</p>
+        <p>A growing toolkit for images, documents, audio and video — every one runs privately in your browser.</p>
       </div>
-      <div class="tool-grid" id="toolGrid"></div>
+      <div class="tool-cats" id="toolGrid"></div>
     </div>
   </section>
 
@@ -112,27 +112,50 @@
 
     var ARROWS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 8h11l-3-3m3 3l-3 3" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 16H9l3-3m-3 3l3 3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-    /* build the tool grid from the registry */
-    var grid = document.getElementById('toolGrid');
-    grid.innerHTML = TOOLS.map(function (t) {
+    /* build a single compact, scannable tool card */
+    function toolCard(t) {
       var live = t.status === 'live';
       var beta = t.status === 'beta';
       var linkable = live || beta;
-      var tag = beta ? '<span class="soon-tag badge">Beta</span>'
-              : (live ? '' : '<span class="soon-tag badge">Coming soon</span>');
-      var go = linkable
-        ? '<span class="go">Open converter &rarr;</span>'
-        : '<span class="go" style="color:var(--muted)">Coming soon</span>';
+      var status = live ? '<span class="tc-status tc-live">Live</span>'
+                 : beta ? '<span class="tc-status tc-beta">Beta</span>'
+                        : '<span class="tc-status tc-soon">Coming soon</span>';
       var inner =
-        tag +
+        status +
         '<div class="tool-ico">' + ARROWS + '</div>' +
-        '<div class="fmt">' + RC.escapeHtml(t.from) + ' &rarr; ' + RC.escapeHtml(t.to) + '</div>' +
-        '<h3>' + RC.escapeHtml(t.name) + '</h3>' +
-        '<p class="desc">' + RC.escapeHtml(t.desc) + '</p>' + go;
+        '<div class="tc-main">' +
+          '<h3>' + RC.escapeHtml(t.name) + '</h3>' +
+          '<p class="fmt">' + RC.escapeHtml(t.from) + ' &rarr; ' + RC.escapeHtml(t.to) + '</p>' +
+          '<p class="desc">' + RC.escapeHtml(t.desc) + '</p>' +
+        '</div>';
       if (linkable) {
         return '<a class="tool-card" href="' + t.url + '">' + inner + '</a>';
       }
       return '<div class="tool-card soon" aria-label="' + RC.escapeHtml(t.name) + ' (coming soon)">' + inner + '</div>';
+    }
+
+    /* group the registry by category, live tools first within each group */
+    var CAT_ORDER = ['Image', 'Document', 'Video', 'Audio'];
+    var STATUS_RANK = { live: 0, beta: 1, soon: 2 };
+    var byCat = {};
+    TOOLS.forEach(function (t) { (byCat[t.category] = byCat[t.category] || []).push(t); });
+    var cats = CAT_ORDER.filter(function (c) { return byCat[c]; });
+    Object.keys(byCat).forEach(function (c) { if (cats.indexOf(c) < 0) cats.push(c); });
+
+    var grid = document.getElementById('toolGrid');
+    grid.innerHTML = cats.map(function (c) {
+      var rank = function (s) { return (s in STATUS_RANK) ? STATUS_RANK[s] : 9; };
+      var items = byCat[c].slice().sort(function (a, b) {
+        return rank(a.status) - rank(b.status);
+      });
+      return '<section class="tool-cat">' +
+        '<div class="tool-cat-head">' +
+          '<h3>' + RC.escapeHtml(c) + '</h3>' +
+          '<span class="count">' + items.length + '</span>' +
+          '<span class="rule" aria-hidden="true"></span>' +
+        '</div>' +
+        '<div class="tool-grid">' + items.map(toolCard).join('') + '</div>' +
+      '</section>';
     }).join('');
 
     /* hero drop routing */
