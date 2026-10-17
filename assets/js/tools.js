@@ -90,7 +90,7 @@ window.RC_TOOLS = [
     url: '/jpg-to-pdf/',
     desc: 'Combine one or more JPG images into a single PDF document.',
     category: 'Document',
-    status: 'soon',
+    status: 'live',
     accept: ['jpg', 'jpeg']
   },
   {

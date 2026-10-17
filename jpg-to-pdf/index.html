@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JPG to PDF Converter — Free &amp; Private | ReidConvert</title>
+<meta name="description" content="Combine JPG and PNG images into a single PDF online, free. Reorder pages, choose page size and orientation, and download — all in your browser. 100% private, nothing is uploaded.">
+<link rel="canonical" href="https://reidconvert.com/jpg-to-pdf/">
+<meta name="theme-color" content="#01295D">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ReidConvert">
+<meta property="og:title" content="JPG to PDF Converter — Free &amp; Private">
+<meta property="og:description" content="Combine images into one PDF, right in your browser. Reorder, pick page size. Files never leave your device.">
+<meta property="og:url" content="https://reidconvert.com/jpg-to-pdf/">
+<meta property="og:image" content="https://reidconvert.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="JPG to PDF Converter — Free &amp; Private">
+<meta name="twitter:description" content="Combine JPG/PNG images into a PDF in your browser. 100% private.">
+<meta name="twitter:image" content="https://reidconvert.com/assets/img/og.png">
+
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Is the JPG to PDF converter free?","acceptedAnswer":{"@type":"Answer","text":"Yes. ReidConvert is completely free with no sign-up, no watermarks and no daily limits."}},
+    {"@type":"Question","name":"Are my images uploaded to a server?","acceptedAnswer":{"@type":"Answer","text":"No. The PDF is built entirely in your browser using JavaScript. Your images never leave your device."}},
+    {"@type":"Question","name":"Can I put several images in one PDF?","acceptedAnswer":{"@type":"Answer","text":"Yes. Add as many JPG or PNG images as you like, drag to reorder them, and they become pages of a single PDF in that order."}},
+    {"@type":"Question","name":"Can I choose the page size?","acceptedAnswer":{"@type":"Answer","text":"Yes. Choose Fit to image, A4 or US Letter, and portrait or landscape orientation."}}
+  ]
+}
+</script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script defer src="/assets/js/tools.js"></script>
+<script defer src="/assets/js/common.js"></script>
+</head>
+<body>
+<header id="site-header"></header>
+
+<main id="main">
+  <section class="tool-hero">
+    <div class="container">
+      <p class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/#tools">Tools</a> &rsaquo; JPG to PDF</p>
+      <h1>JPG to PDF Converter</h1>
+      <p class="lead">Add JPG or PNG images, drag to reorder, and combine them into a single PDF — free, fast and 100% private. The PDF is built right here in your browser; your images are never uploaded.</p>
+    </div>
+  </section>
+
+  <section class="app">
+    <div class="container app-wrap">
+      <div id="workspace" class="cv">
+        <div class="cv-drop" id="cvDrop" role="button" tabindex="0" aria-label="Add images: drag and drop, or press Enter to choose files">
+          <div class="cv-drop-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 16V4m0 0L7 9m5-5l5 5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke-linecap="round"/></svg>
+          </div>
+          <h2 class="cv-drop-title">Drop JPG or PNG images here</h2>
+          <p class="cv-drop-sub">or choose files from your device</p>
+          <button type="button" class="btn btn-lg" id="cvPick">Choose files</button>
+          <p class="cv-drop-formats">Supported: .jpg, .jpeg, .png &middot; combined into one PDF</p>
+          <input type="file" id="cvInput" accept=".jpg,.jpeg,.png,image/jpeg,image/png" multiple hidden>
+        </div>
+        <div class="cv-privacy"><span aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 9-4-.8-7-4.5-7-9V6l7-3z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span> 100% private — your images are combined on this device and never uploaded.</div>
+
+        <div id="cvOptionsBar" hidden style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:18px 0 6px">
+          <label class="cv-field-row">Page size
+            <select id="pageSize"><option value="fit">Fit to image</option><option value="a4">A4</option><option value="letter">US Letter</option></select>
+          </label>
+          <label class="cv-field-row">Orientation
+            <select id="orient"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select>
+          </label>
+          <label class="cv-field-row">Margin
+            <select id="margin"><option value="0">None</option><option value="18">Small</option><option value="36" selected>Normal</option></select>
+          </label>
+        </div>
+
+        <ul class="cv-list" id="cvList" aria-live="polite"></ul>
+
+        <div id="cvActions" hidden style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
+          <button type="button" class="btn btn-gold btn-lg" id="cvMake">Create PDF</button>
+          <button type="button" class="btn btn-ghost" id="cvClear">Clear all</button>
+          <span id="cvStatus" class="cv-count" role="status"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="container prose">
+      <h2>How to convert JPG to PDF</h2>
+      <ol>
+        <li><strong>Add images.</strong> Drag JPG or PNG files onto the box, or tap “Choose files”.</li>
+        <li><strong>Reorder.</strong> Use the up/down arrows to set page order; remove any you don’t want.</li>
+        <li><strong>Create &amp; download.</strong> Pick a page size and orientation, then tap “Create PDF”.</li>
+      </ol>
+      <div class="faq" style="margin-top:28px">
+        <details open><summary>Is it really private?</summary><p>Yes. The PDF is assembled entirely in your browser. No image is ever sent to a server.</p></details>
+        <details><summary>What does “Fit to image” do?</summary><p>Each page is sized exactly to its image, so there are no borders. Choose A4 or US Letter if you want a standard paper size with margins.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script>
+(function () {
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    var RC = window.RC; if (!RC) return;
+    var drop = document.getElementById('cvDrop'),
+        input = document.getElementById('cvInput'),
+        listEl = document.getElementById('cvList'),
+        actions = document.getElementById('cvActions'),
+        optionsBar = document.getElementById('cvOptionsBar'),
+        makeBtn = document.getElementById('cvMake'),
+        clearBtn = document.getElementById('cvClear'),
+        statusEl = document.getElementById('cvStatus');
+    document.getElementById('cvPick').addEventListener('click', function(e){ e.stopPropagation(); input.click(); });
+
+    var MAX_FILES = 50, MAX_BYTES = 25 * 1024 * 1024; // free-tier guard (see limits.js)
+    var pages = []; // {id, file, url, name}
+    var nextId = 1;
+
+    function sniff(file) {
+      return file.slice(0, 12).arrayBuffer().then(function (buf) {
+        var b = new Uint8Array(buf);
+        var jpg = b[0]===0xFF && b[1]===0xD8 && b[2]===0xFF;
+        var png = b[0]===0x89 && b[1]===0x50 && b[2]===0x4E && b[3]===0x47;
+        return jpg ? 'jpg' : (png ? 'png' : null);
+      });
+    }
+
+    function addFiles(files) {
+      var accepted = files.filter(function (f) { return /\.(jpe?g|png)$/i.test(f.name) || /image\/(jpeg|png)/.test(f.type); });
+      accepted.forEach(function (file) {
+        if (pages.length >= MAX_FILES) return;
+        if (file.size > MAX_BYTES) { alert('“' + file.name + '” is larger than the 25 MB free limit and was skipped.'); return; }
+        var url = URL.createObjectURL(file);
+        pages.push({ id: nextId++, file: file, url: url, name: file.name });
+      });
+      render();
+    }
+
+    function render() {
+      listEl.innerHTML = '';
+      pages.forEach(function (p, idx) {
+        var li = document.createElement('li');
+        li.className = 'cv-row';
+        li.innerHTML =
+          '<div class="cv-info" style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">' +
+            '<span class="cv-thumb" style="width:46px;height:46px;border-radius:8px;background:#f0f2f6 center/cover no-repeat;background-image:url(\'' + p.url + '\');flex:0 0 auto"></span>' +
+            '<span class="cv-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + RC.escapeHtml(p.name) + '</span>' +
+          '</div>' +
+          '<div class="cv-row-actions" style="display:flex;gap:6px">' +
+            '<button type="button" class="btn btn-sm btn-ghost" data-act="up" aria-label="Move up"' + (idx===0?' disabled':'') + '>&uarr;</button>' +
+            '<button type="button" class="btn btn-sm btn-ghost" data-act="down" aria-label="Move down"' + (idx===pages.length-1?' disabled':'') + '>&darr;</button>' +
+            '<button type="button" class="btn btn-sm btn-ghost" data-act="rm" aria-label="Remove">&times;</button>' +
+          '</div>';
+        li.querySelector('[data-act="up"]').addEventListener('click', function(){ if(idx>0){ var t=pages[idx-1]; pages[idx-1]=pages[idx]; pages[idx]=t; render(); } });
+        li.querySelector('[data-act="down"]').addEventListener('click', function(){ if(idx<pages.length-1){ var t=pages[idx+1]; pages[idx+1]=pages[idx]; pages[idx]=t; render(); } });
+        li.querySelector('[data-act="rm"]').addEventListener('click', function(){ URL.revokeObjectURL(p.url); pages.splice(idx,1); render(); });
+        listEl.appendChild(li);
+      });
+      var any = pages.length > 0;
+      actions.hidden = !any; optionsBar.hidden = !any;
+      statusEl.textContent = any ? (pages.length + ' image' + (pages.length>1?'s':'')) : '';
+    }
+
+    RC.setupDropzone(drop, addFiles, { inputEl: input });
+
+    clearBtn.addEventListener('click', function(){ pages.forEach(function(p){ URL.revokeObjectURL(p.url); }); pages=[]; render(); });
+
+    function imgDims(url) {
+      return new Promise(function (resolve, reject) {
+        var im = new Image();
+        im.onload = function(){ resolve({ w: im.naturalWidth, h: im.naturalHeight }); };
+        im.onerror = function(){ reject(new Error('Could not read an image.')); };
+        im.src = url;
+      });
+    }
+
+    makeBtn.addEventListener('click', function () {
+      if (!pages.length) return;
+      if (typeof PDFLib === 'undefined') { alert('The PDF engine is still loading — please try again in a moment.'); return; }
+      makeBtn.disabled = true; statusEl.textContent = 'Building PDF…';
+      var SIZES = { a4: [595.28, 841.89], letter: [612, 792] };
+      var sizeKey = document.getElementById('pageSize').value;
+      var landscape = document.getElementById('orient').value === 'landscape';
+      var margin = parseInt(document.getElementById('margin').value, 10) || 0;
+
+      PDFLib.PDFDocument.create().then(function (pdf) {
+        var seq = Promise.resolve();
+        pages.forEach(function (p) {
+          seq = seq.then(function () {
+            return p.file.arrayBuffer().then(function (buf) {
+              var bytes = new Uint8Array(buf);
+              var isPng = bytes[0]===0x89 && bytes[1]===0x50;
+              var embed = isPng ? pdf.embedPng(buf) : pdf.embedJpg(buf);
+              return embed.then(function (img) {
+                var pw, ph;
+                if (sizeKey === 'fit') {
+                  pw = img.width + margin*2; ph = img.height + margin*2;
+                } else {
+                  var dims = SIZES[sizeKey].slice();
+                  if (landscape) dims = [dims[1], dims[0]];
+                  pw = dims[0]; ph = dims[1];
+                }
+                var page = pdf.addPage([pw, ph]);
+                var availW = pw - margin*2, availH = ph - margin*2;
+                var scale = Math.min(availW / img.width, availH / img.height);
+                if (sizeKey === 'fit') scale = 1;
+                var dw = img.width * scale, dh = img.height * scale;
+                page.drawImage(img, { x: (pw - dw)/2, y: (ph - dh)/2, width: dw, height: dh });
+              });
+            });
+          });
+        });
+        return seq.then(function () { return pdf.save(); });
+      }).then(function (pdfBytes) {
+        var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        RC.downloadBlob(blob, 'reidconvert-' + RC.todayStr() + '.pdf');
+        statusEl.textContent = 'PDF ready — downloaded.';
+        makeBtn.disabled = false;
+      }).catch(function (e) {
+        statusEl.textContent = '';
+        alert((e && e.message) ? e.message : 'Something went wrong building the PDF.');
+        makeBtn.disabled = false;
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
