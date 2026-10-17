@@ -115,6 +115,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://reidconvert.com/pricing/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://reidconvert.com/about.html</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>

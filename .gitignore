@@ -1,1 +1,10 @@
 test-fixtures/
+
+# Secrets — never commit. (Note: assets/js/config.js holds only PUBLIC client
+# config — the Supabase anon key, safe to ship — so it is intentionally tracked.
+# Real secrets, the service-role + Stripe keys, live only in serverless/.env.)
+.env
+.env.*
+!.env.example
+serverless/.env
+node_modules/

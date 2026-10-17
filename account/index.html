@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your account | ReidConvert</title>
+<meta name="description" content="Manage your ReidConvert account.">
+<link rel="canonical" href="https://reidconvert.com/account/">
+<meta name="theme-color" content="#01295D">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script defer src="/assets/js/config.js"></script>
+<script defer src="/assets/js/tools.js"></script>
+<script defer src="/assets/js/common.js"></script>
+<script defer src="/assets/js/limits.js"></script>
+<script defer src="/assets/js/auth.js"></script>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main">
+  <section class="section">
+    <div class="container" style="max-width:720px">
+      <h1>Your account</h1>
+      <div id="authNotice" class="cv-notice" hidden></div>
+      <div id="accountBody" hidden>
+        <div class="tool-card" style="display:block;margin-top:10px">
+          <h3 style="margin-top:0">Plan</h3>
+          <p id="planLine" class="lead" style="margin:6px 0"></p>
+          <p id="emailLine" style="color:var(--muted)"></p>
+          <button type="button" class="btn btn-gold" id="upgradeBtn" disabled title="Payments are coming soon">Upgrade to Member — coming soon</button>
+          <button type="button" class="btn" id="manageBtn" hidden>Manage billing</button>
+        </div>
+        <div class="tool-card" style="display:block;margin-top:18px" id="historyCard" hidden>
+          <h3 style="margin-top:0">Recent conversions</h3>
+          <p style="color:var(--muted);font-size:.9em">File names and settings only — never the file contents.</p>
+          <ul id="historyList" class="cv-list"></ul>
+          <p id="historyEmpty" style="color:var(--muted)">No conversions recorded yet.</p>
+        </div>
+        <p style="margin-top:22px"><button type="button" class="btn btn-ghost" id="logoutBtn">Log out</button></p>
+      </div>
+    </div>
+  </section>
+</main>
+<footer id="site-footer"></footer>
+<script>
+(function () {
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    var RC = window.RC; if (!RC) return;
+    var notice = document.getElementById('authNotice'), body = document.getElementById('accountBody');
+
+    if (!RC.auth || !RC.auth.enabled()) {
+      notice.hidden = false;
+      notice.innerHTML = '<strong>Accounts are coming soon.</strong> Every ReidConvert tool is free to use right now with no sign-up. This page will show your plan and history once accounts are switched on.';
+      return;
+    }
+
+    RC.auth.user().then(function (u) {
+      if (!u) { window.location.href = '/login/'; return; }
+      body.hidden = false;
+      document.getElementById('emailLine').textContent = u.email || '';
+      return RC.auth.isMember().then(function (isMember) {
+        var plan = isMember ? 'Member' : 'Free';
+        var l = isMember ? RC.limits.MEMBER : RC.limits.FREE;
+        var d = RC.limits.describe(l);
+        document.getElementById('planLine').innerHTML = '<strong>' + plan + '</strong> — ' + d.files + ', ' + d.perFile + ', ' + d.zip + '.';
+        if (isMember) { document.getElementById('upgradeBtn').hidden = true; document.getElementById('manageBtn').hidden = false; }
+        // History (members, when history storage is enabled)
+        if (l.history) {
+          var card = document.getElementById('historyCard'); card.hidden = false;
+          loadHistory();
+        }
+      });
+    }).catch(function () { window.location.href = '/login/'; });
+
+    function loadHistory() {
+      RC.auth.client().then(function (c) {
+        return c.auth.getUser().then(function (r) {
+          var uid = r && r.data && r.data.user && r.data.user.id; if (!uid) return;
+          return c.from('conversion_history').select('converter_id,original_name,output_format,file_size,created_at').eq('user_id', uid).order('created_at', { ascending: false }).limit(25)
+            .then(function (res) {
+              var rows = (res && res.data) || [];
+              var list = document.getElementById('historyList'), empty = document.getElementById('historyEmpty');
+              if (!rows.length) return;
+              empty.hidden = true;
+              list.innerHTML = rows.map(function (h) {
+                return '<li class="cv-row"><div class="cv-info"><div class="cv-name">' + RC.escapeHtml(h.original_name || 'file') +
+                  '</div><div style="font-size:.85em;color:var(--muted)">' + RC.escapeHtml(h.converter_id || '') + ' · ' + RC.escapeHtml(h.output_format || '') + '</div></div></li>';
+              }).join('');
+            });
+        });
+      }).catch(function () {});
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', function () {
+      RC.auth.signOut().then(function () { window.location.href = '/'; });
+    });
+    document.getElementById('manageBtn').addEventListener('click', function () {
+      alert('Billing management opens the Stripe customer portal once Stripe is connected. See docs/STRIPE_SETUP.md.');
+    });
+  });
+})();
+</script>
+</body>
+</html>
