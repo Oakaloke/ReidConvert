@@ -143,9 +143,11 @@
 
   function toolsMenu() {
     var items = TOOLS.map(function (t) {
-      var badge = t.status === 'soon' ? ' <span class="badge">Soon</span>' : '';
-      var href = t.status === 'live' ? t.url : '#';
-      var cls = t.status === 'live' ? '' : ' class="is-soon" aria-disabled="true"';
+      var linkable = t.status === 'live' || t.status === 'beta';
+      var badge = t.status === 'soon' ? ' <span class="badge">Soon</span>'
+                : (t.status === 'beta' ? ' <span class="badge">Beta</span>' : '');
+      var href = linkable ? t.url : '#';
+      var cls = linkable ? '' : ' class="is-soon" aria-disabled="true"';
       return '<li><a href="' + href + '"' + cls + '>' + RC.escapeHtml(t.name) + badge + '</a></li>';
     }).join('');
     return items;
@@ -193,8 +195,10 @@
     var mount = document.getElementById('site-footer');
     if (!mount) return;
     var toolLinks = TOOLS.map(function (t) {
-      var href = t.status === 'live' ? t.url : '#';
-      var soon = t.status === 'soon' ? ' <span class="badge">Soon</span>' : '';
+      var linkable = t.status === 'live' || t.status === 'beta';
+      var href = linkable ? t.url : '#';
+      var soon = t.status === 'soon' ? ' <span class="badge">Soon</span>'
+               : (t.status === 'beta' ? ' <span class="badge">Beta</span>' : '');
       return '<li><a href="' + href + '">' + RC.escapeHtml(t.name) + soon + '</a></li>';
     }).join('');
 

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MP4 to GIF Converter — Free &amp; Private | ReidConvert</title>
+<meta name="description" content="Turn an MP4 video into an animated GIF online, free. Choose frame rate and width, convert right in your browser. 100% private — nothing is uploaded. (Beta)">
+<link rel="canonical" href="https://reidconvert.com/mp4-to-gif/">
+<meta name="theme-color" content="#01295D">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ReidConvert">
+<meta property="og:title" content="MP4 to GIF Converter — Free &amp; Private">
+<meta property="og:description" content="Convert MP4 video to an animated GIF, right in your browser. Files never leave your device.">
+<meta property="og:url" content="https://reidconvert.com/mp4-to-gif/">
+<meta property="og:image" content="https://reidconvert.com/assets/img/og.png">
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script defer src="/assets/js/tools.js"></script>
+<script defer src="/assets/js/common.js"></script>
+<script defer src="/assets/js/media-core.js"></script>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main">
+  <section class="tool-hero">
+    <div class="container">
+      <p class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/#tools">Tools</a> &rsaquo; MP4 to GIF</p>
+      <h1>MP4 to GIF Converter</h1>
+      <p class="lead">Turn a short MP4 clip into a shareable animated GIF — free, private and right here in your browser. Your video is never uploaded.</p>
+    </div>
+  </section>
+  <section class="app"><div class="container app-wrap"><div id="workspace"></div></div></section>
+  <section class="section section-soft"><div class="container prose">
+    <h2>How to convert MP4 to GIF</h2>
+    <ol>
+      <li><strong>Add a short clip.</strong> Drag an MP4 onto the box, or tap “Choose files”. Shorter clips make smaller GIFs.</li>
+      <li><strong>Choose frame rate and width.</strong> Lower values make a smaller file.</li>
+      <li><strong>Convert &amp; download.</strong> A high-quality colour palette is generated for crisp results.</li>
+    </ol>
+    <div class="faq" style="margin-top:28px">
+      <details open><summary>Is it really private?</summary><p>Yes. The GIF is made entirely in your browser. No video is ever sent to a server.</p></details>
+      <details><summary>Why keep it short?</summary><p>GIFs store every frame uncompressed-ish, so long clips become huge. A few seconds works best.</p></details>
+    </div>
+  </div></section>
+</main>
+<footer id="site-footer"></footer>
+<script>
+(function () {
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    var RC = window.RC, mount = document.getElementById('workspace');
+    if (!RC || !RC.createMediaWorkspace || !mount) return;
+    RC.createMediaWorkspace(mount, {
+      key: 'mp4-to-gif', inputLabel: 'MP4', outputLabel: 'GIF',
+      outputExt: 'gif', outputMime: 'image/gif',
+      accept: ['mp4', 'mov', 'webm', 'm4v'], acceptMime: ['video/mp4', 'video/quicktime', 'video/webm'],
+      sniff: function () { return null; },
+      options: [
+        { id: 'fps', label: 'Frame rate', type: 'range', min: 5, max: 24, step: 1, default: 12, unit: ' fps' },
+        { id: 'width', label: 'Width', type: 'select', default: '480',
+          choices: [ {v:'320',label:'320 px'}, {v:'480',label:'480 px'}, {v:'640',label:'640 px'} ] }
+      ],
+      buildArgs: function (s, inName, outName) {
+        var vf = 'fps=' + s.fps + ',scale=' + s.width + ':-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse';
+        return ['-i', inName, '-vf', vf, '-loop', '0', outName];
+      }
+    }, { maxFiles: 5, maxBytes: 25 * 1024 * 1024 });
+  });
+})();
+</script>
+</body>
+</html>

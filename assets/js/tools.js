@@ -144,5 +144,60 @@ window.RC_TOOLS = [
     category: 'Image',
     status: 'live'
     // no `accept`: avoids clobbering the primary image routes on homepage drop.
+  },
+  {
+    key: 'mp4-to-mp3',
+    name: 'MP4 to MP3',
+    from: 'MP4',
+    to: 'MP3',
+    url: '/mp4-to-mp3/',
+    desc: 'Extract the audio track from an MP4 video as an MP3 file.',
+    category: 'Audio',
+    status: 'beta'
+    // no `accept`: several tools take MP4; reach this from the grid/nav.
+  },
+  {
+    key: 'flac-to-mp3',
+    name: 'FLAC to MP3',
+    from: 'FLAC',
+    to: 'MP3',
+    url: '/flac-to-mp3/',
+    desc: 'Convert lossless FLAC audio to compact, universal MP3 — keeps tags.',
+    category: 'Audio',
+    status: 'beta',
+    accept: ['flac']
+  },
+  {
+    key: 'mp4-to-gif',
+    name: 'MP4 to GIF',
+    from: 'MP4',
+    to: 'GIF',
+    url: '/mp4-to-gif/',
+    desc: 'Turn a short MP4 clip into a shareable animated GIF.',
+    category: 'Video',
+    status: 'beta'
+    // no `accept`: several tools take MP4; reach this from the grid/nav.
+  },
+  {
+    key: 'mov-to-mp4',
+    name: 'MOV to MP4',
+    from: 'MOV',
+    to: 'MP4',
+    url: '/mov-to-mp4/',
+    desc: 'Convert Apple QuickTime MOV videos to universal MP4 (H.264).',
+    category: 'Video',
+    status: 'beta',
+    accept: ['mov', 'qt']
+  },
+  {
+    key: 'compress-video',
+    name: 'Compress Video',
+    from: 'MP4 / MOV',
+    to: 'MP4',
+    url: '/compress-video/',
+    desc: 'Shrink MP4 and MOV videos to fit email, chat and upload limits.',
+    category: 'Video',
+    status: 'beta'
+    // no `accept`: several tools take MP4; reach this from the grid/nav.
   }
 ];

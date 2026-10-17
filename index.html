@@ -114,8 +114,11 @@
     var grid = document.getElementById('toolGrid');
     grid.innerHTML = TOOLS.map(function (t) {
       var live = t.status === 'live';
-      var tag = live ? '' : '<span class="soon-tag badge">Coming soon</span>';
-      var go = live
+      var beta = t.status === 'beta';
+      var linkable = live || beta;
+      var tag = beta ? '<span class="soon-tag badge">Beta</span>'
+              : (live ? '' : '<span class="soon-tag badge">Coming soon</span>');
+      var go = linkable
         ? '<span class="go">Open converter &rarr;</span>'
         : '<span class="go" style="color:var(--muted)">Coming soon</span>';
       var inner =
@@ -124,7 +127,7 @@
         '<div class="fmt">' + RC.escapeHtml(t.from) + ' &rarr; ' + RC.escapeHtml(t.to) + '</div>' +
         '<h3>' + RC.escapeHtml(t.name) + '</h3>' +
         '<p class="desc">' + RC.escapeHtml(t.desc) + '</p>' + go;
-      if (live) {
+      if (linkable) {
         return '<a class="tool-card" href="' + t.url + '">' + inner + '</a>';
       }
       return '<div class="tool-card soon" aria-label="' + RC.escapeHtml(t.name) + ' (coming soon)">' + inner + '</div>';
@@ -143,7 +146,7 @@
       var f = files[0];
       var ext = RC.extOf(f.name);
       var tool = RC.toolForExt(ext);
-      if (tool && tool.status === 'live') {
+      if (tool && (tool.status === 'live' || tool.status === 'beta')) {
         msg.textContent = 'Opening ' + tool.name + '…';
         window.location.href = tool.url;
       } else if (tool) {
