@@ -50,6 +50,36 @@ window.RC_TOOLS = [
     // reach this tool from the grid/nav until a multi-match chooser exists.
   },
   {
+    key: 'merge-pdf',
+    name: 'Merge PDF',
+    from: 'PDF',
+    to: 'PDF',
+    url: '/merge-pdf/',
+    desc: 'Combine several PDF files into one, in any order you choose.',
+    category: 'Document',
+    status: 'live'
+  },
+  {
+    key: 'split-pdf',
+    name: 'Split PDF',
+    from: 'PDF',
+    to: 'PDF',
+    url: '/split-pdf/',
+    desc: 'Extract page ranges or split a PDF into separate files.',
+    category: 'Document',
+    status: 'live'
+  },
+  {
+    key: 'compress-pdf',
+    name: 'Compress PDF',
+    from: 'PDF',
+    to: 'PDF',
+    url: '/compress-pdf/',
+    desc: 'Shrink large scanned or image-heavy PDFs to a smaller file.',
+    category: 'Document',
+    status: 'live'
+  },
+  {
     key: 'png-to-jpg',
     name: 'PNG to JPG',
     from: 'PNG',

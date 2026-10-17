@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compress PDF — Free &amp; Private PDF Compressor | ReidConvert</title>
+<meta name="description" content="Shrink large PDF files online, free. Choose a compression level and reduce file size right in your browser. Best for scanned and image-heavy PDFs. 100% private, nothing is uploaded.">
+<link rel="canonical" href="https://reidconvert.com/compress-pdf/">
+<meta name="theme-color" content="#01295D">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ReidConvert">
+<meta property="og:title" content="Compress PDF — Free &amp; Private">
+<meta property="og:description" content="Reduce PDF file size in your browser. Best for scanned documents. Files never leave your device.">
+<meta property="og:url" content="https://reidconvert.com/compress-pdf/">
+<meta property="og:image" content="https://reidconvert.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Compress PDF — Free &amp; Private">
+<meta name="twitter:description" content="Compress PDF files in your browser. 100% private.">
+<meta name="twitter:image" content="https://reidconvert.com/assets/img/og.png">
+
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/css/main.css">
+<meta name="robots" content="index,follow">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Is the Compress PDF tool free?","acceptedAnswer":{"@type":"Answer","text":"Yes. ReidConvert is completely free with no sign-up, no watermarks and no daily limits."}},
+    {"@type":"Question","name":"Are my PDFs uploaded to a server?","acceptedAnswer":{"@type":"Answer","text":"No. Compression happens entirely in your browser using JavaScript. Your document never leaves your device."}},
+    {"@type":"Question","name":"How does the compression work?","acceptedAnswer":{"@type":"Answer","text":"Each page is re-rendered as an optimised image at the quality you choose, then rebuilt into a new PDF. This gives large savings on scanned or image-heavy PDFs. Because pages become images, selectable text is not preserved."}},
+    {"@type":"Question","name":"Will every PDF get smaller?","acceptedAnswer":{"@type":"Answer","text":"Scanned and image-heavy PDFs shrink the most. A PDF that is already just plain text may not shrink and the tool will tell you if the result was not smaller."}}
+  ]
+}
+</script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script defer src="/assets/js/tools.js"></script>
+<script defer src="/assets/js/common.js"></script>
+<script defer src="/assets/js/doc-convert-core.js"></script>
+</head>
+<body>
+<header id="site-header"></header>
+
+<main id="main">
+  <section class="tool-hero">
+    <div class="container">
+      <p class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/#tools">Tools</a> &rsaquo; Compress PDF</p>
+      <h1>Compress PDF</h1>
+      <p class="lead">Drop a bulky PDF and shrink it to a smaller file automatically — free, fast and 100% private. Best for scanned and image-heavy documents. Everything happens in your browser; your files are never uploaded.</p>
+    </div>
+  </section>
+
+  <section class="app">
+    <div class="container app-wrap">
+      <div id="workspace"></div>
+      <p class="cv-opt-hint" style="max-width:720px;margin:14px auto 0;text-align:center">This compressor re-renders each page as an optimised image, which gives big savings on scans and photos. Selectable text becomes part of the image — if you need the text to stay selectable, keep the original.</p>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="container prose">
+      <h2>How to compress a PDF</h2>
+      <ol>
+        <li><strong>Add your PDF.</strong> Drag it onto the box above, or tap “Choose files”.</li>
+        <li><strong>Pick a level.</strong> Open <strong>Options</strong> and choose Balanced or High resolution — lower resolution means a smaller file.</li>
+        <li><strong>Download.</strong> Save the compressed PDF. The new size is shown next to the original.</li>
+      </ol>
+      <div class="faq" style="margin-top:28px">
+        <details open><summary>Is it really private?</summary><p>Yes. Compression runs entirely in your browser. No document is ever sent to a server.</p></details>
+        <details><summary>Why did my text PDF not shrink?</summary><p>Plain-text PDFs are already small and efficient, so re-imaging them can even make them larger. This tool shines on scans and photo-heavy PDFs. If the result is not smaller, keep your original.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script>
+(function () {
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    var RC = window.RC;
+    var mount = document.getElementById('workspace');
+    if (!RC || !RC.createDocWorkspace || !mount) return;
+
+    function sniffPdf(bytes) {
+      if (!bytes || bytes.length < 5) return null;
+      return bytes[0]===0x25 && bytes[1]===0x50 && bytes[2]===0x44 && bytes[3]===0x46;
+    }
+
+    // JPEG quality by resolution preset — lower DPI preset => more compression.
+    function jpegQuality(ctx) { return ctx.settings.dpiPreset === 'high' ? 0.82 : 0.6; }
+    // Cap the raster scale so we actually shrink (pdf.js default scale 1 ~ 72dpi).
+    function rasterScale(ctx) { return ctx.settings.dpiPreset === 'high' ? 1.5 : 1.0; }
+
+    RC.createDocWorkspace(mount, {
+      key: 'compress-pdf',
+      inputLabel: 'PDF',
+      outputLabel: 'PDF',
+      outputExt: 'pdf',
+      outputMime: 'application/pdf',
+      accept: ['pdf'],
+      acceptMime: ['application/pdf'],
+      ocr: false,
+      sniff: sniffPdf,
+      convert: function (item, ctx) {
+        return ctx.libs.ensurePdfjs().then(function (pdfjsLib) {
+          if (typeof PDFLib === 'undefined') throw new Error('The PDF engine is still loading — please try again in a moment.');
+          ctx.onProgress(0.03, 'Opening PDF…');
+          return item.file.arrayBuffer().then(function (buf) {
+            return pdfjsLib.getDocument({ data: buf }).promise.then(function (pdf) {
+              var numPages = pdf.numPages;
+              if (numPages > ctx.tier.maxPagesPerFile) throw new Error('This PDF has ' + numPages + ' pages, above the current ' + ctx.tier.maxPagesPerFile + '-page limit.');
+              var scale = rasterScale(ctx), q = jpegQuality(ctx);
+              return PDFLib.PDFDocument.create().then(function (outPdf) {
+                var chain = Promise.resolve();
+                for (var i = 1; i <= numPages; i++) {
+                  (function (n) {
+                    chain = chain.then(function () {
+                      ctx.throwIfAborted();
+                      ctx.onProgress((n - 1) / numPages, 'Compressing page ' + n + ' of ' + numPages + '…');
+                      return pdf.getPage(n).then(function (page) {
+                        var vp = page.getViewport({ scale: scale });
+                        var canvas = document.createElement('canvas');
+                        canvas.width = Math.max(1, Math.floor(vp.width));
+                        canvas.height = Math.max(1, Math.floor(vp.height));
+                        var cc = canvas.getContext('2d'); cc.fillStyle = '#fff'; cc.fillRect(0,0,canvas.width,canvas.height);
+                        return page.render({ canvasContext: cc, viewport: vp }).promise.then(function () {
+                          return new Promise(function (resolve, reject) {
+                            canvas.toBlob(function (b) { b ? resolve(b) : reject(new Error('Could not encode a page.')); }, 'image/jpeg', q);
+                          });
+                        }).then(function (blob) {
+                          return blob.arrayBuffer().then(function (jbuf) {
+                            return outPdf.embedJpg(jbuf).then(function (img) {
+                              var pg = outPdf.addPage([canvas.width, canvas.height]);
+                              pg.drawImage(img, { x: 0, y: 0, width: canvas.width, height: canvas.height });
+                              canvas.width = canvas.height = 0;
+                            });
+                          });
+                        });
+                      });
+                    });
+                  })(i);
+                }
+                return chain.then(function () {
+                  ctx.onProgress(0.98, 'Saving…');
+                  return outPdf.save();
+                }).then(function (bytes) {
+                  var out = new Blob([bytes], { type: 'application/pdf' });
+                  var note = out.size >= item.file.size ? ' (original was already smaller — keep the original)' : '';
+                  ctx.onProgress(1, 'Done' + note);
+                  return [{ name: RC.baseName(item.file.name) + '-compressed.pdf', blob: out }];
+                });
+              });
+            });
+          });
+        });
+      }
+    }, { maxFiles: 5 });
+  });
+})();
+</script>
+</body>
+</html>

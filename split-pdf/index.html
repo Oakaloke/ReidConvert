@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Split PDF — Free &amp; Private PDF Splitter | ReidConvert</title>
+<meta name="description" content="Split a PDF into separate files online, free. Extract page ranges, split every N pages, or pull out single pages — all in your browser. 100% private, nothing is uploaded.">
+<link rel="canonical" href="https://reidconvert.com/split-pdf/">
+<meta name="theme-color" content="#01295D">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ReidConvert">
+<meta property="og:title" content="Split PDF — Free &amp; Private">
+<meta property="og:description" content="Split a PDF into page ranges or single pages, right in your browser. Files never leave your device.">
+<meta property="og:url" content="https://reidconvert.com/split-pdf/">
+<meta property="og:image" content="https://reidconvert.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Split PDF — Free &amp; Private">
+<meta name="twitter:description" content="Split PDF files in your browser. 100% private.">
+<meta name="twitter:image" content="https://reidconvert.com/assets/img/og.png">
+
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Is the Split PDF tool free?","acceptedAnswer":{"@type":"Answer","text":"Yes. ReidConvert is completely free with no sign-up, no watermarks and no daily limits."}},
+    {"@type":"Question","name":"Are my PDFs uploaded to a server?","acceptedAnswer":{"@type":"Answer","text":"No. Splitting happens entirely in your browser using JavaScript. Your document never leaves your device."}},
+    {"@type":"Question","name":"How do page ranges work?","acceptedAnswer":{"@type":"Answer","text":"Type ranges like 1-3, 5, 8-10. Each range becomes its own PDF. You can also split every N pages, or extract each page as a separate file."}},
+    {"@type":"Question","name":"How are the files returned?","acceptedAnswer":{"@type":"Answer","text":"If one file is produced it downloads directly; multiple files download together as a ZIP."}}
+  ]
+}
+</script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script defer src="/assets/js/tools.js"></script>
+<script defer src="/assets/js/common.js"></script>
+</head>
+<body>
+<header id="site-header"></header>
+
+<main id="main">
+  <section class="tool-hero">
+    <div class="container">
+      <p class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/#tools">Tools</a> &rsaquo; Split PDF</p>
+      <h1>Split PDF</h1>
+      <p class="lead">Drop a PDF and pull out the pages you need — by range, every N pages, or one file per page. Free, fast and 100% private; the split happens right here in your browser.</p>
+    </div>
+  </section>
+
+  <section class="app">
+    <div class="container app-wrap">
+      <div id="workspace" class="cv">
+        <div class="cv-drop" id="cvDrop" role="button" tabindex="0" aria-label="Add a PDF file: drag and drop, or press Enter to choose a file">
+          <div class="cv-drop-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 16V4m0 0L7 9m5-5l5 5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke-linecap="round"/></svg>
+          </div>
+          <h2 class="cv-drop-title">Drop a PDF file here</h2>
+          <p class="cv-drop-sub">or choose a file from your device</p>
+          <button type="button" class="btn btn-lg" id="cvPick">Choose file</button>
+          <p class="cv-drop-formats">Supported: .pdf</p>
+          <input type="file" id="cvInput" accept=".pdf,application/pdf" hidden>
+        </div>
+        <div class="cv-privacy"><span aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 9-4-.8-7-4.5-7-9V6l7-3z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span> 100% private — your PDF is split on this device and never uploaded.</div>
+
+        <div id="cvPanel" hidden style="margin-top:18px">
+          <p id="cvDoc" class="cv-count" style="margin-bottom:12px"></p>
+          <div style="display:flex;flex-direction:column;gap:14px;max-width:560px">
+            <label class="cv-field-col">Split mode
+              <select id="mode">
+                <option value="ranges">Page ranges</option>
+                <option value="every">Every N pages</option>
+                <option value="each">Each page as its own file</option>
+              </select>
+            </label>
+            <label class="cv-field-col" id="rowRanges">Ranges (e.g. 1-3, 5, 8-10)
+              <input type="text" id="ranges" placeholder="1-3, 5, 8-10" value="1">
+            </label>
+            <label class="cv-field-col" id="rowEvery" hidden>Pages per file
+              <input type="number" id="everyN" min="1" value="1">
+            </label>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
+            <button type="button" class="btn btn-gold btn-lg" id="cvMake">Split PDF</button>
+            <button type="button" class="btn btn-ghost" id="cvClear">Start over</button>
+            <span id="cvStatus" class="cv-count" role="status"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="container prose">
+      <h2>How to split a PDF</h2>
+      <ol>
+        <li><strong>Add your PDF.</strong> Drag it onto the box, or tap “Choose file”.</li>
+        <li><strong>Choose how to split.</strong> Enter page ranges, split every N pages, or make one file per page.</li>
+        <li><strong>Download.</strong> One file downloads directly; several download together as a ZIP.</li>
+      </ol>
+      <div class="faq" style="margin-top:28px">
+        <details open><summary>Is it really private?</summary><p>Yes. The split is performed entirely in your browser. No document is ever sent to a server.</p></details>
+        <details><summary>What page numbers can I use?</summary><p>Use any range within the document’s page count. Pages outside the range are ignored with a friendly message.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script>
+(function () {
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    var RC = window.RC; if (!RC) return;
+    var drop = document.getElementById('cvDrop'), input = document.getElementById('cvInput'),
+        panel = document.getElementById('cvPanel'), docEl = document.getElementById('cvDoc'),
+        modeEl = document.getElementById('mode'), rowRanges = document.getElementById('rowRanges'),
+        rowEvery = document.getElementById('rowEvery'), rangesEl = document.getElementById('ranges'),
+        everyEl = document.getElementById('everyN'), makeBtn = document.getElementById('cvMake'),
+        clearBtn = document.getElementById('cvClear'), statusEl = document.getElementById('cvStatus');
+    document.getElementById('cvPick').addEventListener('click', function(e){ e.stopPropagation(); input.click(); });
+
+    var MAX_BYTES = 25 * 1024 * 1024;
+    var current = null; // {file, buf, pageCount}
+
+    modeEl.addEventListener('change', function () {
+      rowRanges.hidden = modeEl.value !== 'ranges';
+      rowEvery.hidden = modeEl.value !== 'every';
+    });
+
+    function reset() { current = null; panel.hidden = true; statusEl.textContent = ''; }
+    clearBtn.addEventListener('click', reset);
+
+    function onFiles(list) {
+      var file = list[0]; if (!file) return;
+      if (!/\.pdf$/i.test(file.name) && file.type !== 'application/pdf') { alert('Please choose a PDF file.'); return; }
+      if (file.size > MAX_BYTES) { alert('This PDF is larger than the 25 MB free limit.'); return; }
+      if (typeof PDFLib === 'undefined') { alert('The PDF engine is still loading — please try again in a moment.'); return; }
+      statusEl.textContent = 'Reading…';
+      file.arrayBuffer().then(function (buf) {
+        return PDFLib.PDFDocument.load(buf, { ignoreEncryption: true }).then(function (doc) {
+          current = { file: file, buf: buf, pageCount: doc.getPageCount() };
+          docEl.textContent = file.name + ' — ' + current.pageCount + ' page' + (current.pageCount>1?'s':'');
+          rangesEl.value = '1-' + current.pageCount;
+          panel.hidden = false; statusEl.textContent = '';
+        });
+      }).catch(function () { alert('This PDF could not be read. It may be password-protected or damaged.'); statusEl.textContent=''; });
+    }
+    RC.setupDropzone(drop, onFiles, { inputEl: input });
+
+    // Parse "1-3, 5, 8-10" -> array of groups, each an array of 0-based page indices.
+    function parseRanges(str, total) {
+      var groups = [];
+      str.split(',').forEach(function (part) {
+        part = part.trim(); if (!part) return;
+        var m = part.match(/^(\d+)\s*-\s*(\d+)$/);
+        if (m) {
+          var a = parseInt(m[1],10), b = parseInt(m[2],10);
+          if (a>b) { var t=a; a=b; b=t; }
+          var g = [];
+          for (var i=a; i<=b; i++) if (i>=1 && i<=total) g.push(i-1);
+          if (g.length) groups.push(g);
+        } else if (/^\d+$/.test(part)) {
+          var p = parseInt(part,10);
+          if (p>=1 && p<=total) groups.push([p-1]);
+        }
+      });
+      return groups;
+    }
+
+    function buildGroups() {
+      var total = current.pageCount;
+      if (modeEl.value === 'each') { var g=[]; for (var i=0;i<total;i++) g.push([i]); return g; }
+      if (modeEl.value === 'every') {
+        var n = Math.max(1, parseInt(everyEl.value,10)||1), out=[], cur=[];
+        for (var j=0;j<total;j++){ cur.push(j); if(cur.length===n){ out.push(cur); cur=[]; } }
+        if (cur.length) out.push(cur);
+        return out;
+      }
+      return parseRanges(rangesEl.value, total);
+    }
+
+    makeBtn.addEventListener('click', function () {
+      if (!current) return;
+      var groups = buildGroups();
+      if (!groups.length) { alert('No valid pages selected. Check your range against the ' + current.pageCount + '-page document.'); return; }
+      makeBtn.disabled = true; statusEl.textContent = 'Splitting…';
+      var base = RC.baseName(current.file.name);
+      var outFiles = [];
+      var seq = Promise.resolve();
+      groups.forEach(function (idxs, gi) {
+        seq = seq.then(function () {
+          return PDFLib.PDFDocument.load(current.buf, { ignoreEncryption: true }).then(function (src) {
+            return PDFLib.PDFDocument.create().then(function (out) {
+              return out.copyPages(src, idxs).then(function (copied) {
+                copied.forEach(function (pg) { out.addPage(pg); });
+                return out.save().then(function (bytes) {
+                  var label = idxs.length === 1 ? ('p' + (idxs[0]+1)) : ('p' + (idxs[0]+1) + '-' + (idxs[idxs.length-1]+1));
+                  outFiles.push({ name: base + '-' + label + '.pdf', blob: new Blob([bytes], { type: 'application/pdf' }) });
+                });
+              });
+            });
+          });
+        });
+      });
+      seq.then(function () {
+        if (outFiles.length === 1) RC.downloadBlob(outFiles[0].blob, outFiles[0].name);
+        else RC.zipAndDownload(outFiles, base + '-split-' + RC.todayStr() + '.zip');
+        statusEl.textContent = outFiles.length + ' file' + (outFiles.length>1?'s':'') + ' created — downloaded.';
+        makeBtn.disabled = false;
+      }).catch(function (e) {
+        statusEl.textContent=''; alert((e && e.message) || 'Something went wrong splitting the PDF.'); makeBtn.disabled = false;
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
