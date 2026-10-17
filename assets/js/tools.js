@@ -210,5 +210,35 @@ window.RC_TOOLS = [
     category: 'Video',
     status: 'beta'
     // no `accept`: several tools take MP4; reach this from the grid/nav.
+  },
+  {
+    key: 'docx-to-pdf',
+    name: 'Word to PDF',
+    from: 'DOCX',
+    to: 'PDF',
+    url: '/docx-to-pdf/',
+    desc: 'Turn Word documents into shareable PDFs.',
+    category: 'Document',
+    status: 'soon'    // see BUILD_REPORT.md — in-browser fidelity work pending
+  },
+  {
+    key: 'pptx-to-pdf',
+    name: 'PowerPoint to PDF',
+    from: 'PPTX',
+    to: 'PDF',
+    url: '/pptx-to-pdf/',
+    desc: 'Convert PowerPoint slide decks into PDF.',
+    category: 'Document',
+    status: 'soon'    // see BUILD_REPORT.md — in-browser fidelity work pending
+  },
+  {
+    key: 'epub-to-pdf',
+    name: 'EPUB to PDF',
+    from: 'EPUB',
+    to: 'PDF',
+    url: '/epub-to-pdf/',
+    desc: 'Convert EPUB e-books into PDF for easy printing.',
+    category: 'Document',
+    status: 'soon'    // see BUILD_REPORT.md — in-browser fidelity work pending
   }
 ];
