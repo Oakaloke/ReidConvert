@@ -146,6 +146,17 @@ window.RC_TOOLS = [
     // no `accept`: avoids clobbering the primary image routes on homepage drop.
   },
   {
+    key: 'raw-to-jpg',
+    name: 'RAW to JPG',
+    from: 'RAW',
+    to: 'JPG',
+    url: '/raw-to-jpg/',
+    desc: 'Convert camera RAW photos (CR2, NEF, ARW, DNG, ORF, RW2, RAF) to JPG.',
+    category: 'Image',
+    status: 'beta',
+    accept: ['cr2', 'cr3', 'nef', 'arw', 'dng', 'orf', 'rw2', 'raf']
+  },
+  {
     key: 'mp4-to-mp3',
     name: 'MP4 to MP3',
     from: 'MP4',
