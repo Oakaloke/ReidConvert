@@ -45,7 +45,7 @@ window.RC_TOOLS = [
     url: '/png-to-jpg/',
     desc: 'Flatten PNG images into smaller, shareable JPG files.',
     category: 'Image',
-    status: 'soon',
+    status: 'live',
     accept: ['png']
   },
   {
@@ -56,7 +56,7 @@ window.RC_TOOLS = [
     url: '/jpg-to-png/',
     desc: 'Convert JPG photos to lossless PNG images.',
     category: 'Image',
-    status: 'soon',
+    status: 'live',
     accept: ['jpg', 'jpeg']
   },
   {
@@ -67,7 +67,7 @@ window.RC_TOOLS = [
     url: '/webp-to-jpg/',
     desc: 'Turn modern WEBP images into widely supported JPG files.',
     category: 'Image',
-    status: 'soon',
+    status: 'live',
     accept: ['webp']
   },
   {
@@ -80,5 +80,27 @@ window.RC_TOOLS = [
     category: 'Document',
     status: 'soon',
     accept: ['jpg', 'jpeg']
+  },
+  {
+    key: 'image-to-webp',
+    name: 'Image to WEBP',
+    from: 'PNG / JPG',
+    to: 'WEBP',
+    url: '/image-to-webp/',
+    desc: 'Convert PNG and JPG images to smaller, modern WEBP files.',
+    category: 'Image',
+    status: 'live'
+    // no `accept`: PNG/JPG drops route to their primary converters; reach this tool from the grid/nav.
+  },
+  {
+    key: 'compress-image',
+    name: 'Compress Image',
+    from: 'JPG / PNG / WEBP',
+    to: 'Smaller',
+    url: '/compress-image/',
+    desc: 'Shrink JPG, PNG and WEBP file sizes while keeping them looking great.',
+    category: 'Image',
+    status: 'live'
+    // no `accept`: avoids clobbering the primary image routes on homepage drop.
   }
 ];
