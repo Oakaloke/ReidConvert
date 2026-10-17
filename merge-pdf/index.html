@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Merge PDF — Free &amp; Private PDF Combiner | ReidConvert</title>
+<meta name="description" content="Combine several PDF files into one online, free. Drag to reorder, then merge and download — all in your browser. 100% private, nothing is uploaded.">
+<link rel="canonical" href="https://reidconvert.com/merge-pdf/">
+<meta name="theme-color" content="#01295D">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ReidConvert">
+<meta property="og:title" content="Merge PDF — Free &amp; Private">
+<meta property="og:description" content="Combine multiple PDFs into one, right in your browser. Reorder, merge, download. Files never leave your device.">
+<meta property="og:url" content="https://reidconvert.com/merge-pdf/">
+<meta property="og:image" content="https://reidconvert.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Merge PDF — Free &amp; Private">
+<meta name="twitter:description" content="Combine PDF files in your browser. 100% private.">
+<meta name="twitter:image" content="https://reidconvert.com/assets/img/og.png">
+
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Is the Merge PDF tool free?","acceptedAnswer":{"@type":"Answer","text":"Yes. ReidConvert is completely free with no sign-up, no watermarks and no daily limits."}},
+    {"@type":"Question","name":"Are my PDFs uploaded to a server?","acceptedAnswer":{"@type":"Answer","text":"No. The files are merged entirely in your browser using JavaScript. Your documents never leave your device."}},
+    {"@type":"Question","name":"Can I change the order?","acceptedAnswer":{"@type":"Answer","text":"Yes. Use the up and down arrows to arrange the files, and they are merged in exactly that order."}},
+    {"@type":"Question","name":"Is there a limit?","acceptedAnswer":{"@type":"Answer","text":"The free tier merges up to 20 PDFs at a time, up to 25 MB each. Larger limits are planned for members."}}
+  ]
+}
+</script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script defer src="/assets/js/tools.js"></script>
+<script defer src="/assets/js/common.js"></script>
+</head>
+<body>
+<header id="site-header"></header>
+
+<main id="main">
+  <section class="tool-hero">
+    <div class="container">
+      <p class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/#tools">Tools</a> &rsaquo; Merge PDF</p>
+      <h1>Merge PDF</h1>
+      <p class="lead">Add several PDFs, drag to reorder, and combine them into one document — free, fast and 100% private. The merge happens right here in your browser; your files are never uploaded.</p>
+    </div>
+  </section>
+
+  <section class="app">
+    <div class="container app-wrap">
+      <div id="workspace" class="cv">
+        <div class="cv-drop" id="cvDrop" role="button" tabindex="0" aria-label="Add PDF files: drag and drop, or press Enter to choose files">
+          <div class="cv-drop-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 16V4m0 0L7 9m5-5l5 5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke-linecap="round"/></svg>
+          </div>
+          <h2 class="cv-drop-title">Drop PDF files here</h2>
+          <p class="cv-drop-sub">or choose files from your device</p>
+          <button type="button" class="btn btn-lg" id="cvPick">Choose files</button>
+          <p class="cv-drop-formats">Supported: .pdf &middot; merged into one document</p>
+          <input type="file" id="cvInput" accept=".pdf,application/pdf" multiple hidden>
+        </div>
+        <div class="cv-privacy"><span aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 9-4-.8-7-4.5-7-9V6l7-3z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span> 100% private — your PDFs are merged on this device and never uploaded.</div>
+
+        <ul class="cv-list" id="cvList" aria-live="polite"></ul>
+
+        <div id="cvActions" hidden style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
+          <button type="button" class="btn btn-gold btn-lg" id="cvMake">Merge PDFs</button>
+          <button type="button" class="btn btn-ghost" id="cvClear">Clear all</button>
+          <span id="cvStatus" class="cv-count" role="status"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="container prose">
+      <h2>How to merge PDF files</h2>
+      <ol>
+        <li><strong>Add files.</strong> Drag your PDFs onto the box, or tap “Choose files”.</li>
+        <li><strong>Reorder.</strong> Use the arrows to set the order the documents should appear.</li>
+        <li><strong>Merge &amp; download.</strong> Tap “Merge PDFs” and the combined file downloads automatically.</li>
+      </ol>
+      <div class="faq" style="margin-top:28px">
+        <details open><summary>Is it really private?</summary><p>Yes. The merge is performed entirely in your browser. No file is ever sent to a server.</p></details>
+        <details><summary>Are bookmarks and form fields kept?</summary><p>Pages, text and images are copied faithfully. Some advanced interactive features (certain form fields, bookmarks) may not carry across — the visible content always does.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script>
+(function () {
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    var RC = window.RC; if (!RC) return;
+    var drop = document.getElementById('cvDrop'), input = document.getElementById('cvInput'),
+        listEl = document.getElementById('cvList'), actions = document.getElementById('cvActions'),
+        makeBtn = document.getElementById('cvMake'), clearBtn = document.getElementById('cvClear'),
+        statusEl = document.getElementById('cvStatus');
+    document.getElementById('cvPick').addEventListener('click', function(e){ e.stopPropagation(); input.click(); });
+
+    var MAX_FILES = 20, MAX_BYTES = 25 * 1024 * 1024;
+    var files = []; var nextId = 1;
+
+    function addFiles(list) {
+      list.filter(function (f) { return /\.pdf$/i.test(f.name) || f.type === 'application/pdf'; }).forEach(function (file) {
+        if (files.length >= MAX_FILES) return;
+        if (file.size > MAX_BYTES) { alert('“' + file.name + '” is larger than the 25 MB free limit and was skipped.'); return; }
+        files.push({ id: nextId++, file: file, name: file.name });
+      });
+      render();
+    }
+
+    function render() {
+      listEl.innerHTML = '';
+      files.forEach(function (p, idx) {
+        var li = document.createElement('li'); li.className = 'cv-row';
+        li.innerHTML =
+          '<div class="cv-info" style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">' +
+            '<span class="cv-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + RC.escapeHtml(p.name) + '</span>' +
+            '<span class="cv-fmt" style="opacity:.7;flex:0 0 auto">' + RC.humanSize(p.file.size) + '</span>' +
+          '</div>' +
+          '<div class="cv-row-actions" style="display:flex;gap:6px">' +
+            '<button type="button" class="btn btn-sm btn-ghost" data-act="up" aria-label="Move up"' + (idx===0?' disabled':'') + '>&uarr;</button>' +
+            '<button type="button" class="btn btn-sm btn-ghost" data-act="down" aria-label="Move down"' + (idx===files.length-1?' disabled':'') + '>&darr;</button>' +
+            '<button type="button" class="btn btn-sm btn-ghost" data-act="rm" aria-label="Remove">&times;</button>' +
+          '</div>';
+        li.querySelector('[data-act="up"]').addEventListener('click', function(){ if(idx>0){ var t=files[idx-1]; files[idx-1]=files[idx]; files[idx]=t; render(); } });
+        li.querySelector('[data-act="down"]').addEventListener('click', function(){ if(idx<files.length-1){ var t=files[idx+1]; files[idx+1]=files[idx]; files[idx]=t; render(); } });
+        li.querySelector('[data-act="rm"]').addEventListener('click', function(){ files.splice(idx,1); render(); });
+        listEl.appendChild(li);
+      });
+      actions.hidden = files.length === 0;
+      statusEl.textContent = files.length ? (files.length + ' file' + (files.length>1?'s':'')) : '';
+    }
+
+    RC.setupDropzone(drop, addFiles, { inputEl: input });
+    clearBtn.addEventListener('click', function(){ files=[]; render(); });
+
+    makeBtn.addEventListener('click', function () {
+      if (files.length < 1) return;
+      if (typeof PDFLib === 'undefined') { alert('The PDF engine is still loading — please try again in a moment.'); return; }
+      makeBtn.disabled = true; statusEl.textContent = 'Merging…';
+      PDFLib.PDFDocument.create().then(function (out) {
+        var seq = Promise.resolve();
+        files.forEach(function (p) {
+          seq = seq.then(function () {
+            return p.file.arrayBuffer().then(function (buf) {
+              return PDFLib.PDFDocument.load(buf, { ignoreEncryption: true }).then(function (src) {
+                return out.copyPages(src, src.getPageIndices()).then(function (copied) {
+                  copied.forEach(function (pg) { out.addPage(pg); });
+                });
+              });
+            }).catch(function () { throw new Error('“' + p.name + '” could not be read. It may be password-protected or damaged.'); });
+          });
+        });
+        return seq.then(function () { return out.save(); });
+      }).then(function (bytes) {
+        RC.downloadBlob(new Blob([bytes], { type: 'application/pdf' }), 'reidconvert-merged-' + RC.todayStr() + '.pdf');
+        statusEl.textContent = 'Merged — downloaded.'; makeBtn.disabled = false;
+      }).catch(function (e) {
+        statusEl.textContent = ''; alert((e && e.message) || 'Something went wrong merging the PDFs.'); makeBtn.disabled = false;
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

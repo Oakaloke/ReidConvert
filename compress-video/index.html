@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compress Video — Free &amp; Private Video Compressor | ReidConvert</title>
+<meta name="description" content="Shrink MP4 and MOV videos online, free. Pick a quality level and optional downscale to make a smaller file, right in your browser. 100% private — nothing is uploaded. (Beta)">
+<link rel="canonical" href="https://reidconvert.com/compress-video/">
+<meta name="theme-color" content="#01295D">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ReidConvert">
+<meta property="og:title" content="Compress Video — Free &amp; Private">
+<meta property="og:description" content="Make videos smaller in your browser. Files never leave your device.">
+<meta property="og:url" content="https://reidconvert.com/compress-video/">
+<meta property="og:image" content="https://reidconvert.com/assets/img/og.png">
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script defer src="/assets/js/tools.js"></script>
+<script defer src="/assets/js/common.js"></script>
+<script defer src="/assets/js/media-core.js"></script>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main">
+  <section class="tool-hero">
+    <div class="container">
+      <p class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/#tools">Tools</a> &rsaquo; Compress Video</p>
+      <h1>Compress Video</h1>
+      <p class="lead">Make a big MP4 or MOV smaller so it fits email, chat or upload limits — free, private and right here in your browser. Your video is never uploaded.</p>
+    </div>
+  </section>
+  <section class="app"><div class="container app-wrap"><div id="workspace"></div></div></section>
+  <section class="section section-soft"><div class="container prose">
+    <h2>How to compress a video</h2>
+    <ol>
+      <li><strong>Add your video.</strong> Drag an MP4 or MOV onto the box, or tap “Choose files”.</li>
+      <li><strong>Choose a level.</strong> “Smallest” saves the most space; “High quality” keeps more detail. Optionally downscale the resolution.</li>
+      <li><strong>Convert &amp; download.</strong> The new size is shown on each row.</li>
+    </ol>
+    <div class="faq" style="margin-top:28px">
+      <details open><summary>Is it really private?</summary><p>Yes. Compression runs entirely in your browser. No video is ever sent to a server.</p></details>
+      <details><summary>Can I hit an exact file size?</summary><p>This Beta uses quality levels rather than an exact target size. Pick a smaller level or downscale to go lower; the result size shows on each row.</p></details>
+    </div>
+  </div></section>
+</main>
+<footer id="site-footer"></footer>
+<script>
+(function () {
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    var RC = window.RC, mount = document.getElementById('workspace');
+    if (!RC || !RC.createMediaWorkspace || !mount) return;
+    RC.createMediaWorkspace(mount, {
+      key: 'compress-video', inputLabel: 'Video', outputLabel: 'MP4',
+      outputExt: 'mp4', outputMime: 'video/mp4',
+      accept: ['mp4', 'mov', 'm4v', 'webm', 'mkv'], acceptMime: ['video/mp4', 'video/quicktime', 'video/webm'],
+      sniff: function () { return null; },
+      options: [
+        { id: 'level', label: 'Compression', type: 'select', default: '28',
+          choices: [ {v:'23',label:'High quality'}, {v:'28',label:'Balanced'}, {v:'32',label:'Smallest'} ] },
+        { id: 'scale', label: 'Resolution', type: 'select', default: 'keep',
+          choices: [ {v:'keep',label:'Keep original'}, {v:'720',label:'720p'}, {v:'480',label:'480p'} ] }
+      ],
+      buildArgs: function (s, inName, outName) {
+        var args = ['-i', inName, '-c:v', 'libx264', '-crf', s.level, '-preset', 'veryfast'];
+        if (s.scale !== 'keep') args.push('-vf', 'scale=-2:' + s.scale);
+        args.push('-c:a', 'aac', '-b:a', '96k', '-movflags', '+faststart', outName);
+        return args;
+      }
+    }, { maxFiles: 4, maxBytes: 25 * 1024 * 1024 });
+  });
+})();
+</script>
+</body>
+</html>

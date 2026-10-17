@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MP4 to MP3 Converter — Free &amp; Private | ReidConvert</title>
+<meta name="description" content="Extract the audio from an MP4 video as an MP3 file online, free. Choose the bitrate and convert right in your browser. 100% private — nothing is uploaded. (Beta)">
+<link rel="canonical" href="https://reidconvert.com/mp4-to-mp3/">
+<meta name="theme-color" content="#01295D">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ReidConvert">
+<meta property="og:title" content="MP4 to MP3 Converter — Free &amp; Private">
+<meta property="og:description" content="Pull the audio out of an MP4 as MP3, right in your browser. Files never leave your device.">
+<meta property="og:url" content="https://reidconvert.com/mp4-to-mp3/">
+<meta property="og:image" content="https://reidconvert.com/assets/img/og.png">
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script defer src="/assets/js/tools.js"></script>
+<script defer src="/assets/js/common.js"></script>
+<script defer src="/assets/js/media-core.js"></script>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main">
+  <section class="tool-hero">
+    <div class="container">
+      <p class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/#tools">Tools</a> &rsaquo; MP4 to MP3</p>
+      <h1>MP4 to MP3 Converter</h1>
+      <p class="lead">Extract the soundtrack from an MP4 video and save it as an MP3 — free, private and right here in your browser. Your video is never uploaded.</p>
+    </div>
+  </section>
+  <section class="app"><div class="container app-wrap"><div id="workspace"></div></div></section>
+  <section class="section section-soft"><div class="container prose">
+    <h2>How to convert MP4 to MP3</h2>
+    <ol>
+      <li><strong>Add your video.</strong> Drag an MP4 onto the box, or tap “Choose files”.</li>
+      <li><strong>Pick a bitrate.</strong> 128, 192 or 320 kbps — higher sounds better and is a little larger.</li>
+      <li><strong>Convert &amp; download.</strong> Tap Convert, then save your MP3.</li>
+    </ol>
+    <div class="faq" style="margin-top:28px">
+      <details open><summary>Is it really private?</summary><p>Yes. The audio is extracted entirely in your browser. No video is ever sent to a server.</p></details>
+      <details><summary>Why does it say Beta?</summary><p>Audio and video conversion uses a large engine that runs in your browser. It works well for typical clips, but very long or large files can be slow.</p></details>
+    </div>
+  </div></section>
+</main>
+<footer id="site-footer"></footer>
+<script>
+(function () {
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    var RC = window.RC, mount = document.getElementById('workspace');
+    if (!RC || !RC.createMediaWorkspace || !mount) return;
+    RC.createMediaWorkspace(mount, {
+      key: 'mp4-to-mp3', inputLabel: 'MP4', outputLabel: 'MP3',
+      outputExt: 'mp3', outputMime: 'audio/mpeg',
+      accept: ['mp4', 'm4v', 'mov'], acceptMime: ['video/mp4', 'video/quicktime'],
+      sniff: function () { return null; },
+      options: [ { id: 'bitrate', label: 'Quality', type: 'select', default: '192',
+        choices: [ {v:'128',label:'128 kbps'}, {v:'192',label:'192 kbps'}, {v:'320',label:'320 kbps'} ] } ],
+      buildArgs: function (s, inName, outName) {
+        return ['-i', inName, '-vn', '-c:a', 'libmp3lame', '-b:a', s.bitrate + 'k', outName];
+      }
+    }, { maxFiles: 10 });
+  });
+})();
+</script>
+</body>
+</html>

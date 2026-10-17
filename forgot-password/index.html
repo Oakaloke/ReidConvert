@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reset your password | ReidConvert</title>
+<meta name="description" content="Reset your ReidConvert account password.">
+<link rel="canonical" href="https://reidconvert.com/forgot-password/">
+<meta name="theme-color" content="#01295D">
+<meta name="robots" content="noindex,follow">
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script defer src="/assets/js/config.js"></script>
+<script defer src="/assets/js/tools.js"></script>
+<script defer src="/assets/js/common.js"></script>
+<script defer src="/assets/js/auth.js"></script>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main">
+  <section class="section">
+    <div class="container" style="max-width:440px">
+      <h1 style="text-align:center">Reset your password</h1>
+      <p style="text-align:center;color:var(--muted)">We’ll email you a secure link to set a new password.</p>
+      <div id="authNotice" class="cv-notice" hidden></div>
+      <form id="authForm" class="auth-card" style="display:flex;flex-direction:column;gap:14px;margin-top:18px">
+        <label class="cv-field-col">Email
+          <input type="email" id="email" autocomplete="email" required>
+        </label>
+        <button type="submit" class="btn btn-gold btn-lg" id="submitBtn">Send reset link</button>
+        <p id="formMsg" role="status" aria-live="polite" style="min-height:1.2em;text-align:center"></p>
+      </form>
+      <p style="text-align:center;margin-top:16px"><a href="/login/">Back to log in</a></p>
+    </div>
+  </section>
+</main>
+<footer id="site-footer"></footer>
+<script>
+(function () {
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    var RC = window.RC; if (!RC) return;
+    var form = document.getElementById('authForm'), notice = document.getElementById('authNotice'),
+        msg = document.getElementById('formMsg'), submitBtn = document.getElementById('submitBtn');
+    if (!RC.auth || !RC.auth.enabled()) {
+      notice.hidden = false;
+      notice.innerHTML = '<strong>Accounts are coming soon.</strong> There’s nothing to reset yet — every ReidConvert tool is free with no sign-up.';
+      form.style.opacity = '.5'; form.querySelectorAll('input,button').forEach(function (n) { n.disabled = true; });
+      return;
+    }
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      submitBtn.disabled = true; msg.textContent = 'Sending…';
+      RC.auth.resetPassword(document.getElementById('email').value.trim())
+        .then(function () { msg.textContent = 'If that email has an account, a reset link is on its way.'; })
+        .catch(function (err) { submitBtn.disabled = false; msg.textContent = (err && err.message) || 'Could not send the reset link.'; });
+    });
+  });
+})();
+</script>
+</body>
+</html>

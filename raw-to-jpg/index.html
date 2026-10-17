@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAW to JPG Converter — Free &amp; Private | ReidConvert</title>
+<meta name="description" content="Convert camera RAW photos (CR2, NEF, ARW, DNG, ORF, RW2, RAF) to JPG online, free. Extracts the full-size embedded preview right in your browser. 100% private — nothing is uploaded. (Beta)">
+<link rel="canonical" href="https://reidconvert.com/raw-to-jpg/">
+<meta name="theme-color" content="#01295D">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ReidConvert">
+<meta property="og:title" content="RAW to JPG Converter — Free &amp; Private">
+<meta property="og:description" content="Convert camera RAW photos to JPG in your browser. Files never leave your device.">
+<meta property="og:url" content="https://reidconvert.com/raw-to-jpg/">
+<meta property="og:image" content="https://reidconvert.com/assets/img/og.png">
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Is the RAW to JPG converter free?","acceptedAnswer":{"@type":"Answer","text":"Yes. ReidConvert is completely free with no sign-up, no watermarks and no daily limits."}},
+    {"@type":"Question","name":"Are my photos uploaded?","acceptedAnswer":{"@type":"Answer","text":"No. Conversion happens entirely in your browser. Your RAW files never leave your device."}},
+    {"@type":"Question","name":"How does it work?","acceptedAnswer":{"@type":"Answer","text":"Camera RAW files embed a full-size JPG preview rendered by the camera. ReidConvert extracts that preview, so you get a high-quality JPG instantly without a heavy RAW decoder. This is why it is marked Beta."}},
+    {"@type":"Question","name":"Which formats are supported?","acceptedAnswer":{"@type":"Answer","text":"Canon CR2/CR3, Nikon NEF, Sony ARW, Adobe DNG, Olympus ORF, Panasonic RW2 and Fujifilm RAF. Any RAW with an embedded JPG preview will work."}}
+  ]
+}
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script defer src="/assets/js/tools.js"></script>
+<script defer src="/assets/js/common.js"></script>
+<script defer src="/assets/js/convert-core.js"></script>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main">
+  <section class="tool-hero">
+    <div class="container">
+      <p class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/#tools">Tools</a> &rsaquo; RAW to JPG</p>
+      <h1>RAW to JPG Converter</h1>
+      <p class="lead">Convert camera RAW photos — CR2, NEF, ARW, DNG, ORF, RW2, RAF — to shareable JPGs, free and 100% private. Everything happens in your browser; your files are never uploaded.</p>
+    </div>
+  </section>
+  <section class="app">
+    <div class="container app-wrap">
+      <div id="workspace"></div>
+      <p class="cv-opt-hint" style="max-width:720px;margin:14px auto 0;text-align:center"><strong>Beta.</strong> This tool extracts the full-size JPG preview that your camera embeds in the RAW file — fast and high quality, without a heavy RAW decoder. It does not re-develop RAW sensor data.</p>
+    </div>
+  </section>
+  <section class="section section-soft"><div class="container prose">
+    <h2>How to convert RAW to JPG</h2>
+    <ol>
+      <li><strong>Add your RAW photos.</strong> Drag them onto the box, or tap “Choose files”.</li>
+      <li><strong>Let it convert.</strong> The embedded full-size preview is extracted and saved as a JPG. Open <strong>Options</strong> to set quality or resize.</li>
+      <li><strong>Download.</strong> Save each JPG, or grab them all as a ZIP.</li>
+    </ol>
+    <div class="faq" style="margin-top:28px">
+      <details open><summary>Is it really private?</summary><p>Yes. Everything runs in your browser. No photo is ever sent to a server.</p></details>
+      <details><summary>What if my RAW has no preview?</summary><p>A small number of RAW files store only a tiny thumbnail or none at all. If no usable preview is found you will see a friendly message.</p></details>
+    </div>
+  </div></section>
+</main>
+<footer id="site-footer"></footer>
+<script>
+(function () {
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    var RC = window.RC, mount = document.getElementById('workspace');
+    if (!RC || !RC.createWorkspace || !mount) return;
+
+    function loadImage(blob) {
+      return new Promise(function (resolve, reject) {
+        var url = URL.createObjectURL(blob);
+        var img = new Image();
+        img.onload = function () { URL.revokeObjectURL(url); resolve(img); };
+        img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('The embedded preview could not be read.')); };
+        img.src = url;
+      });
+    }
+
+    // Scan the RAW bytes for embedded JPEG streams (SOI FFD8 ... EOI FFD9) and
+    // return the LARGEST one (the full-size preview, not the tiny thumbnail).
+    function extractLargestJpeg(buf) {
+      var b = new Uint8Array(buf);
+      var best = null, bestLen = 0;
+      var i = 0, n = b.length;
+      while (i < n - 1) {
+        if (b[i] === 0xFF && b[i + 1] === 0xD8 && b[i + 2] === 0xFF) {
+          // find matching EOI
+          var j = i + 2;
+          while (j < n - 1) {
+            if (b[j] === 0xFF && b[j + 1] === 0xD9) { break; }
+            j++;
+          }
+          if (j < n - 1) {
+            var len = (j + 2) - i;
+            if (len > bestLen) { bestLen = len; best = [i, j + 2]; }
+            i = j + 2;
+            continue;
+          }
+        }
+        i++;
+      }
+      // Require a reasonably large preview (> 40 KB) so we skip tiny thumbnails.
+      if (best && bestLen > 40 * 1024) return b.slice(best[0], best[1]);
+      return null;
+    }
+
+    function decodeRaw(file) {
+      return file.arrayBuffer().then(function (buf) {
+        var jpegBytes = extractLargestJpeg(buf);
+        if (!jpegBytes) throw new Error('No full-size JPG preview was found in this RAW file. Some cameras only embed a small thumbnail.');
+        var blob = new Blob([jpegBytes], { type: 'image/jpeg' });
+        return loadImage(blob).then(function (img) { return [img]; });
+      });
+    }
+
+    // RAW sniff: TIFF-based (II*\0 / MM\0*) covers CR2/NEF/ARW/DNG/ORF/RW2;
+    // Fujifilm RAF begins with the ASCII 'FUJIFILM'. Allow unknown (null) and let
+    // the preview scan be the real gate.
+    function sniffRaw(bytes) {
+      if (!bytes || bytes.length < 4) return null;
+      var tiffLE = bytes[0]===0x49 && bytes[1]===0x49 && bytes[2]===0x2A && bytes[3]===0x00;
+      var tiffBE = bytes[0]===0x4D && bytes[1]===0x4D && bytes[2]===0x00 && bytes[3]===0x2A;
+      var raf = bytes[0]===0x46 && bytes[1]===0x55 && bytes[2]===0x4A && bytes[3]===0x49; // 'FUJI'
+      if (tiffLE || tiffBE || raf) return true;
+      return null;
+    }
+
+    RC.createWorkspace(mount, {
+      key: 'raw-to-jpg',
+      inputLabel: 'RAW',
+      outputLabel: 'JPG',
+      outputExt: 'jpg',
+      outputMime: 'image/jpeg',
+      accept: ['cr2', 'cr3', 'nef', 'arw', 'dng', 'orf', 'rw2', 'raf'],
+      acceptMime: ['image/x-canon-cr2', 'image/x-nikon-nef', 'image/x-sony-arw', 'image/x-adobe-dng', 'image/tiff'],
+      sniff: sniffRaw,
+      decode: decodeRaw
+    }, { maxFiles: 20 });
+  });
+})();
+</script>
+</body>
+</html>

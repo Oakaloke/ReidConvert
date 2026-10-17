@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log in | ReidConvert</title>
+<meta name="description" content="Log in to your ReidConvert account.">
+<link rel="canonical" href="https://reidconvert.com/login/">
+<meta name="theme-color" content="#01295D">
+<meta name="robots" content="noindex,follow">
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script defer src="/assets/js/config.js"></script>
+<script defer src="/assets/js/tools.js"></script>
+<script defer src="/assets/js/common.js"></script>
+<script defer src="/assets/js/auth.js"></script>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main">
+  <section class="section">
+    <div class="container" style="max-width:440px">
+      <h1 style="text-align:center">Log in</h1>
+      <div id="authNotice" class="cv-notice" hidden></div>
+      <form id="authForm" class="auth-card" style="display:flex;flex-direction:column;gap:14px;margin-top:18px">
+        <label class="cv-field-col">Email
+          <input type="email" id="email" autocomplete="email" required>
+        </label>
+        <label class="cv-field-col">Password
+          <input type="password" id="password" autocomplete="current-password" required minlength="6">
+        </label>
+        <button type="submit" class="btn btn-gold btn-lg" id="submitBtn">Log in</button>
+        <button type="button" class="btn btn-ghost" id="magicBtn">Email me a magic link instead</button>
+        <button type="button" class="btn" id="googleBtn" hidden>Continue with Google</button>
+        <p id="formMsg" role="status" aria-live="polite" style="min-height:1.2em;text-align:center"></p>
+      </form>
+      <p style="text-align:center;margin-top:16px">New here? <a href="/signup/">Create an account</a></p>
+      <p style="text-align:center"><a href="/forgot-password/">Forgot your password?</a></p>
+    </div>
+  </section>
+</main>
+<footer id="site-footer"></footer>
+<script>
+(function () {
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    var RC = window.RC; if (!RC) return;
+    var form = document.getElementById('authForm'), notice = document.getElementById('authNotice'),
+        msg = document.getElementById('formMsg'), submitBtn = document.getElementById('submitBtn'),
+        magicBtn = document.getElementById('magicBtn'), googleBtn = document.getElementById('googleBtn');
+    var CFG = window.RC_CONFIG || {};
+
+    if (!RC.auth || !RC.auth.enabled()) {
+      notice.hidden = false;
+      notice.innerHTML = '<strong>Accounts are coming soon.</strong> ReidConvert is completely free to use with no sign-up — every converter works right now without an account.';
+      form.style.opacity = '.5'; form.querySelectorAll('input,button').forEach(function (n) { n.disabled = true; });
+      return;
+    }
+    if (CFG.GOOGLE_SIGN_IN) googleBtn.hidden = false;
+
+    RC.auth.user().then(function (u) { if (u) window.location.href = '/account/'; });
+
+    function busy(on, label) { submitBtn.disabled = on; msg.textContent = label || ''; }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      busy(true, 'Logging in…');
+      RC.auth.signIn(document.getElementById('email').value.trim(), document.getElementById('password').value)
+        .then(function () { window.location.href = '/account/'; })
+        .catch(function (err) { busy(false, friendly(err)); });
+    });
+    magicBtn.addEventListener('click', function () {
+      var email = document.getElementById('email').value.trim();
+      if (!email) { msg.textContent = 'Enter your email first.'; return; }
+      busy(true, 'Sending magic link…');
+      RC.auth.signInMagic(email).then(function () { busy(false, 'Check your email for a sign-in link.'); })
+        .catch(function (err) { busy(false, friendly(err)); });
+    });
+    googleBtn.addEventListener('click', function () {
+      RC.auth.signInGoogle().catch(function (err) { msg.textContent = friendly(err); });
+    });
+    function friendly(err) {
+      var m = (err && err.message) || 'Something went wrong. Please try again.';
+      if (/invalid login/i.test(m)) return 'That email or password is incorrect.';
+      if (/email not confirmed/i.test(m)) return 'Please confirm your email first — check your inbox.';
+      return m;
+    }
+  });
+})();
+</script>
+</body>
+</html>
