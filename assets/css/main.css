@@ -519,6 +519,24 @@ body.cv-modal-open { overflow: hidden; }
   .cv-modal-btns .btn { flex: 1; }
 }
 
+/* freemium: usage meter (account page) + upgrade modal */
+.usage-meter { margin: 10px 0 2px; }
+.usage-meter .usage-bar { height: 10px; background: var(--bg-soft); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.usage-meter .usage-bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--navy), #2f66b8); transition: width .3s ease; }
+.usage-meter .usage-bar.is-full > i { background: linear-gradient(90deg, var(--warn), var(--err)); }
+.usage-meter .usage-text { font-size: .9rem; color: var(--muted); margin: 8px 0 0; }
+
+.rc-upgrade { position: fixed; inset: 0; z-index: 400; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.rc-upgrade-backdrop { position: absolute; inset: 0; background: rgba(2,22,54,.55); backdrop-filter: blur(2px); }
+.rc-upgrade-card { position: relative; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow-lg); width: 100%; max-width: 460px; padding: 30px 28px; text-align: center; }
+.rc-upgrade-ico { font-size: 2.4rem; line-height: 1; }
+.rc-upgrade-card h2 { margin: 10px 0 8px; font-size: 1.4rem; }
+.rc-upgrade-card p { color: var(--body); margin: 0 0 18px; }
+.rc-upgrade-actions { display: flex; flex-direction: column; gap: 10px; }
+.rc-upgrade-actions .btn { width: 100%; }
+.rc-upgrade-fine { font-size: .82rem; color: var(--muted); margin: 16px 0 0 !important; }
+
 /* workspace / tool-page dropzone drag feedback — a soft navy glow + lift */
 .cv-drop, .dropzone { transition: border-color .18s ease, background .18s ease, box-shadow .18s ease, transform .18s cubic-bezier(.2,.7,.3,1); }
 .cv-drop.is-drag, .dropzone.is-drag { transform: scale(1.01);

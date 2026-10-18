@@ -17,6 +17,7 @@
 <script defer src="/assets/js/tools.js"></script>
 <script defer src="/assets/js/common.js"></script>
 <script defer src="/assets/js/limits.js"></script>
+<script defer src="/assets/js/usage.js"></script>
 <script defer src="/assets/js/auth.js"></script>
 </head>
 <body>
@@ -31,6 +32,10 @@
           <h3 style="margin-top:0">Plan</h3>
           <p id="planLine" class="lead" style="margin:6px 0"></p>
           <p id="emailLine" style="color:var(--muted)"></p>
+          <div id="usageMeter" class="usage-meter" hidden>
+            <div class="usage-bar"><i></i></div>
+            <p class="usage-text"></p>
+          </div>
           <button type="button" class="btn btn-gold" id="upgradeBtn" disabled title="Payments are coming soon">Upgrade to Member — coming soon</button>
           <button type="button" class="btn" id="manageBtn" hidden>Manage billing</button>
         </div>
@@ -69,6 +74,7 @@
         var d = RC.limits.describe(l);
         document.getElementById('planLine').innerHTML = '<strong>' + plan + '</strong> — ' + d.files + ', ' + d.perFile + ', ' + d.zip + '.';
         if (isMember) { document.getElementById('upgradeBtn').hidden = true; document.getElementById('manageBtn').hidden = false; }
+        renderUsage(isMember);
         // History (members, when history storage is enabled)
         if (l.history) {
           var card = document.getElementById('historyCard'); card.hidden = false;
@@ -76,6 +82,25 @@
         }
       });
     }).catch(function () { window.location.href = '/login/'; });
+
+    function renderUsage(isMember) {
+      var box = document.getElementById('usageMeter');
+      if (!RC.usage) return;
+      RC.usage.refresh().then(function (s) {
+        box.hidden = false;
+        var bar = box.querySelector('.usage-bar'), fill = box.querySelector('.usage-bar > i'), txt = box.querySelector('.usage-text');
+        if (isMember || s.unlimited) {
+          bar.hidden = true;
+          txt.innerHTML = '<strong>Unlimited</strong> conversions this month — ' + s.count + ' so far.';
+          return;
+        }
+        var pct = Math.min(100, Math.round((s.count / s.limit) * 100));
+        fill.style.width = pct + '%';
+        bar.classList.toggle('is-full', s.count >= s.limit);
+        txt.innerHTML = '<strong>' + s.count + ' of ' + s.limit + '</strong> free conversions used this month' +
+          (s.count >= s.limit ? ' — <a href="/pricing/">upgrade for unlimited</a>.' : ' · ' + s.remaining + ' left.');
+      }).catch(function () {});
+    }
 
     function loadHistory() {
       RC.auth.client().then(function (c) {

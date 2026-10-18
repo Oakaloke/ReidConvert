@@ -452,6 +452,7 @@
     function enqueueConvert(item) {
       if (item.status === 'converting' || item.status === 'finished') return;
       if (queue.indexOf(item) !== -1) return;
+      if (window.RC && RC.usage && !RC.usage.gate(mount)) return;                   // freemium gate (no-op unless enforced + over limit)
       queue.push(item);
       setStatus(item, 'converting');
       setProgress(item, 0, 'Queued…');
@@ -477,6 +478,7 @@
         });
         setProgress(item, 1, 'Done');
         setStatus(item, 'finished');
+        if (window.RC && RC.usage) RC.usage.record({ tool: engine.key, name: item.file.name, outputFormat: engine.outputLabel, size: item.file.size });
         announce(item.file.name + ' converted.');
       }).catch(function (e) {
         if (e && e.cancelled) { setStatus(item, 'cancelled'); return; }

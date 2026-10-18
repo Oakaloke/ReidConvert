@@ -13,5 +13,14 @@ window.RC_CONFIG = {
   SUPABASE_ANON_KEY: '',
   AUTH_ENABLED: false,
   MEMBERSHIP_ENFORCED: false,
-  GOOGLE_SIGN_IN: true
+  GOOGLE_SIGN_IN: true,
+
+  // Freemium: free accounts get this many conversions per calendar month.
+  // Change this ONE number to adjust the free allowance. Members are unlimited.
+  FREE_MONTHLY_CONVERSIONS: 10,
+  // Enforce the free conversion count? Keep false until Stripe is live so free
+  // users are never blocked before they can upgrade. Flip true (with Stripe, or
+  // to test the wall) to turn on the hard limit + upgrade prompt.
+  // MEMBERSHIP_ENFORCED = true also enables enforcement.
+  USAGE_ENFORCED: false
 };

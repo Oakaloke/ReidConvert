@@ -338,6 +338,7 @@
     function enqueueConvert(item) {
       if (item.status === 'converting' || item.status === 'finished') return;      // no duplicate / rapid-click starts
       if (queue.indexOf(item) !== -1) return;
+      if (window.RC && RC.usage && !RC.usage.gate(mount)) return;                   // freemium gate (no-op unless enforced + over limit)
       queue.push(item);
       setStatus(item, 'converting');
       pump();
@@ -369,6 +370,7 @@
         return chain;
       }).then(function () {
         setStatus(item, 'finished');
+        if (window.RC && RC.usage) RC.usage.record({ tool: engine.key, name: item.file.name, outputFormat: engine.outputLabel, size: item.file.size });
         announce(item.file.name + ' converted.');
       }).catch(function (e) {
         item.error = (e && e.message) ? e.message : 'Could not convert this file.';

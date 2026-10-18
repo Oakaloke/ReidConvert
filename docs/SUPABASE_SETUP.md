@@ -87,6 +87,10 @@ create policy "read own history"
   on public.conversion_history for select using (auth.uid() = user_id);
 create policy "insert own history"
   on public.conversion_history for insert with check (auth.uid() = user_id);
+
+-- Index that makes the monthly usage count fast (freemium quota).
+create index if not exists conversion_history_user_created_idx
+  on public.conversion_history (user_id, created_at desc);
 ```
 
 ## 4. Turn it on
@@ -97,3 +101,39 @@ BUILD_REPORT.md → "Wiring the login link site-wide").
 
 Leave `MEMBERSHIP_ENFORCED: false` until Stripe is live so no limits lock. Then see
 [STRIPE_SETUP.md](STRIPE_SETUP.md).
+
+## 5. Freemium conversion limit (how it works)
+
+Every conversion is recorded as one row in `conversion_history` (file name + format only —
+never contents). `assets/js/usage.js` counts a user's rows for the current calendar month and
+compares against the free allowance:
+
+- **The free allowance is one number:** `FREE_MONTHLY_CONVERSIONS` in `assets/js/config.js`
+  (default **10**). Change it and redeploy — that's the whole knob. Members are unlimited.
+- **Tracking vs blocking are separate.** Usage is always *tracked* (and shown on `/account/`),
+  but a user is only *blocked* (with an upgrade prompt) when `USAGE_ENFORCED: true` **or**
+  `MEMBERSHIP_ENFORCED: true`. Keep both `false` and nothing ever locks — the site behaves exactly
+  as it does today. Flip `USAGE_ENFORCED: true` when you want the 10/month wall live.
+- Before login (or with accounts off) the count falls back to a private `localStorage` mirror, so
+  the wall is still demonstrable for testing without a backend.
+
+### Mark a user as a paying Member (manual, for testing before Stripe)
+Run this in the Supabase SQL editor (replace the email). This is exactly what the Stripe webhook
+will do automatically once billing is connected:
+
+```sql
+update public.profiles
+set subscription_status = 'active'
+where id = (select id from auth.users where email = 'you@example.com');
+```
+
+Set it back to `'free'` to test the Free experience again:
+
+```sql
+update public.profiles set subscription_status = 'free'
+where id = (select id from auth.users where email = 'you@example.com');
+```
+
+A Member is only treated as unlimited when `MEMBERSHIP_ENFORCED: true`; until then everyone is
+Free-but-generous. To preview the Member UI early, set `MEMBERSHIP_ENFORCED: true` in a local
+`config.js` and mark yourself active with the SQL above.

@@ -208,6 +208,7 @@
               var blob = new Blob([out.buffer], { type: engine.outputMime });
               try { ff.FS('unlink', inName); ff.FS('unlink', outFile); } catch (e) {}
               it.blob = blob; it.url = URL.createObjectURL(blob); it.status = 'done'; it.progress = 1;
+              if (window.RC && RC.usage) RC.usage.record({ tool: engine.key, name: it.file.name, outputFormat: engine.outputLabel, size: it.file.size });
               updateRow(it); render();
             });
           });
@@ -223,6 +224,7 @@
     convertBtn.addEventListener('click', function () {
       var pending = items.filter(function (i) { return i.status === 'ready' || i.status === 'error'; });
       if (!pending.length) return;
+      if (window.RC && RC.usage && !RC.usage.gate(mount)) return;                   // freemium gate (no-op unless enforced + over limit)
       convertBtn.disabled = true;
       var seq = Promise.resolve();
       pending.forEach(function (it) { seq = seq.then(function () { return convertOne(it); }); });
