@@ -18,6 +18,7 @@
 <script defer src="/assets/js/auth.js"></script>
 <script defer src="/assets/js/limits.js"></script>
 <script defer src="/assets/js/usage.js"></script>
+<script defer src="/assets/js/billing.js"></script>
 </head>
 <body>
 <header id="site-header"></header>
@@ -33,7 +34,7 @@
       <div class="tool-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
         <div class="tool-card" style="display:block">
           <h3 style="margin-top:0">Free</h3>
-          <p class="fmt">£0 — no account needed</p>
+          <p class="fmt">$0 — no account needed</p>
           <ul class="prose" style="margin-top:12px">
             <li>All converters</li>
             <li>1 file at a time</li>
@@ -47,7 +48,7 @@
         <div class="tool-card" style="display:block;border:2px solid var(--gold,#C29039)">
           <span class="soon-tag badge">Coming soon</span>
           <h3 style="margin-top:0">Member</h3>
-          <p class="fmt"><span id="price">a small monthly price</span></p>
+          <p class="fmt"><span id="price">$5/month</span></p>
           <ul class="prose" style="margin-top:12px">
             <li>Everything in Free, plus:</li>
             <li>Batch up to 50 files at once</li>
@@ -64,5 +65,25 @@
   </section>
 </main>
 <footer id="site-footer"></footer>
+<script>
+(function () {
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    var RC = window.RC; if (!RC || !RC.billing) return;
+    var label = RC.billing.priceLabel();
+    var priceEl = document.getElementById('price');
+    if (priceEl) priceEl.textContent = label;
+    var btn = document.getElementById('upgradeLink');
+    if (btn && RC.billing.configured()) {
+      var card = btn.closest('.tool-card');
+      var soon = card && card.querySelector('.soon-tag');
+      if (soon) soon.remove();
+      btn.textContent = 'Upgrade to Member — ' + label;
+      btn.href = '#';
+      btn.addEventListener('click', function (e) { e.preventDefault(); RC.billing.checkout(); });
+    }
+  });
+})();
+</script>
 </body>
 </html>

@@ -21,5 +21,7 @@ window.RC_CONFIG = {
   MEMBERSHIP_ENFORCED: false,
   GOOGLE_SIGN_IN: true,        // show "Continue with Google" (requires Google provider enabled in Supabase)
   FREE_MONTHLY_CONVERSIONS: 10,// free accounts: conversions per calendar month (members unlimited)
-  USAGE_ENFORCED: false        // enforce the free count (block + upgrade prompt) — keep false until Stripe is live
+  USAGE_ENFORCED: false,       // enforce the free count (block + upgrade prompt) — keep false until Stripe is live
+  FUNCTIONS_URL: '',           // base URL of deployed serverless fns, e.g. https://xxxx.supabase.co/functions/v1 (empty → Upgrade buttons stay "coming soon")
+  MEMBER_PRICE_LABEL: '$5/month'
 };

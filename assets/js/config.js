@@ -22,5 +22,12 @@ window.RC_CONFIG = {
   // users are never blocked before they can upgrade. Flip true (with Stripe, or
   // to test the wall) to turn on the hard limit + upgrade prompt.
   // MEMBERSHIP_ENFORCED = true also enables enforcement.
-  USAGE_ENFORCED: false
+  USAGE_ENFORCED: false,
+
+  // Billing (Stripe). Base URL of your deployed serverless functions — e.g.
+  // 'https://xxxx.supabase.co/functions/v1' (Supabase Edge) or your Netlify/
+  // Vercel functions base. Leave '' and the Upgrade buttons stay "coming soon".
+  // The $5/month price itself is created in Stripe (STRIPE_PRICE_ID on the host).
+  FUNCTIONS_URL: '',
+  MEMBER_PRICE_LABEL: '$5/month'
 };

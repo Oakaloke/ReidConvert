@@ -19,6 +19,7 @@
 <script defer src="/assets/js/limits.js"></script>
 <script defer src="/assets/js/usage.js"></script>
 <script defer src="/assets/js/auth.js"></script>
+<script defer src="/assets/js/billing.js"></script>
 </head>
 <body>
 <header id="site-header"></header>
@@ -73,7 +74,13 @@
         var l = isMember ? RC.limits.MEMBER : RC.limits.FREE;
         var d = RC.limits.describe(l);
         document.getElementById('planLine').innerHTML = '<strong>' + plan + '</strong> — ' + d.files + ', ' + d.perFile + ', ' + d.zip + '.';
-        if (isMember) { document.getElementById('upgradeBtn').hidden = true; document.getElementById('manageBtn').hidden = false; }
+        var upBtn = document.getElementById('upgradeBtn');
+        if (isMember) { upBtn.hidden = true; document.getElementById('manageBtn').hidden = false; }
+        else if (RC.billing && RC.billing.configured()) {
+          upBtn.disabled = false; upBtn.removeAttribute('title');
+          upBtn.textContent = 'Upgrade to Member — ' + RC.billing.priceLabel();
+          upBtn.addEventListener('click', function () { RC.billing.checkout(); });
+        }
         renderUsage(isMember);
         // History (members, when history storage is enabled)
         if (l.history) {
@@ -125,8 +132,15 @@
       RC.auth.signOut().then(function () { window.location.href = '/'; });
     });
     document.getElementById('manageBtn').addEventListener('click', function () {
+      if (RC.billing && RC.billing.configured()) { RC.billing.portal(); return; }
       alert('Billing management opens the Stripe customer portal once Stripe is connected. See docs/STRIPE_SETUP.md.');
     });
+
+    // Friendly note after returning from Stripe Checkout.
+    if (/[?&]checkout=success/.test(window.location.search)) {
+      notice.hidden = false; notice.className = 'cv-notice info';
+      notice.innerHTML = '<strong>Thanks for subscribing!</strong> Your Member access will activate as soon as the payment is confirmed. Refresh in a moment if your plan still shows Free.';
+    }
   });
 })();
 </script>

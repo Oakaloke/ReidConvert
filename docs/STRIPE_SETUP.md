@@ -4,9 +4,13 @@ Everything below is **scaffolding only** — it is wired but intentionally inert
 these steps. GitHub Pages cannot run server code, so the three functions in `serverless/`
 must be deployed to a serverless host. Do [SUPABASE_SETUP.md](SUPABASE_SETUP.md) first.
 
-## 1. Create the product + price
-1. Stripe Dashboard → Products → add a product "ReidConvert Member".
-2. Add a **recurring monthly** price. Copy its **Price ID** (`price_...`).
+## 1. Create the product + price ($5/month)
+1. Stripe Dashboard → Products → **Add product** → name it "ReidConvert Member".
+2. Pricing model **Standard pricing**, price **$5.00 USD**, billing period **Monthly**
+   (recurring). Save.
+3. Copy the **Price ID** (`price_...`) — it goes in `STRIPE_PRICE_ID` on the host (step 3).
+   The amount lives in Stripe; the site only shows the label `MEMBER_PRICE_LABEL` ("$5/month"
+   in `assets/js/config.js`), so change that if you ever change the price.
 
 ## 2. Pick a host for the three functions
 GitHub Pages serves the static site; the functions need a server. Easiest options:
@@ -41,9 +45,20 @@ STRIPE_CANCEL_URL=https://reidconvert.com/pricing/?checkout=cancel
   verification — see the note at the top of `serverless/stripe-webhook.js`).
 
 ## 5. Point the front end at your functions
-In `assets/js/config.js` add your function base URL (e.g. `FUNCTIONS_URL`) and wire the
-Account page "Upgrade" / "Manage billing" buttons to POST to `create-checkout-session` /
-`create-portal-session`. (Buttons are currently disabled placeholders.)
+The buttons are already wired (`assets/js/billing.js`) — they just need the base URL of your
+deployed functions. In `assets/js/config.js` set:
+```js
+FUNCTIONS_URL: 'https://xxxx.supabase.co/functions/v1',  // Supabase Edge example
+MEMBER_PRICE_LABEL: '$5/month'
+```
+`billing.js` POSTs to `FUNCTIONS_URL + '/create-checkout-session'` and
+`FUNCTIONS_URL + '/create-portal-session'`, so deploy those two functions under those exact
+names. As soon as `FUNCTIONS_URL` is set **and** `AUTH_ENABLED: true`:
+- the Pricing page "Upgrade (coming soon)" becomes **"Upgrade to Member — $5/month"** and starts
+  Checkout (logged-out visitors are sent to sign up first);
+- the Account page Upgrade button enables, and **Manage billing** opens the Stripe customer portal.
+
+Leave `FUNCTIONS_URL: ''` and both buttons stay in their "coming soon" state — nothing calls Stripe.
 
 ## 6. Flip the switch
 Once a test checkout flips a profile's `subscription_status` to `active` via the webhook:
