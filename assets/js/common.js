@@ -236,28 +236,57 @@
     } catch (e) {}
   }
 
+  /* inline US flag — renders identically on every OS (emoji flags don't on Windows) */
+  var US_FLAG =
+    '<svg class="us-flag" viewBox="0 0 20 14" width="20" height="14" aria-hidden="true" focusable="false">' +
+      '<rect width="20" height="14" fill="#b22234"/>' +
+      '<g fill="#fff">' +
+        '<rect y="1.08" width="20" height="1.08"/><rect y="3.23" width="20" height="1.08"/>' +
+        '<rect y="5.38" width="20" height="1.08"/><rect y="7.54" width="20" height="1.08"/>' +
+        '<rect y="9.69" width="20" height="1.08"/><rect y="11.85" width="20" height="1.08"/>' +
+      '</g>' +
+      '<rect width="8" height="7.54" fill="#3c3b6e"/>' +
+      '<g fill="#fff">' +
+        '<circle cx="1.5" cy="1.4" r=".45"/><circle cx="3.5" cy="1.4" r=".45"/><circle cx="5.5" cy="1.4" r=".45"/>' +
+        '<circle cx="2.5" cy="2.9" r=".45"/><circle cx="4.5" cy="2.9" r=".45"/>' +
+        '<circle cx="1.5" cy="4.4" r=".45"/><circle cx="3.5" cy="4.4" r=".45"/><circle cx="5.5" cy="4.4" r=".45"/>' +
+        '<circle cx="2.5" cy="5.9" r=".45"/><circle cx="4.5" cy="5.9" r=".45"/>' +
+      '</g>' +
+    '</svg>';
+
+  function footerCategories() {
+    var groups = [['Image', 'Images'], ['Document', 'Documents'], ['Video', 'Video'], ['Audio', 'Audio']];
+    return groups.map(function (g) {
+      // live + beta only — keep the footer tidy; "coming soon" tools live in the nav + tools section
+      var items = TOOLS.filter(function (t) { return t.category === g[0] && (t.status === 'live' || t.status === 'beta'); });
+      if (!items.length) return '';
+      var links = items.map(function (t) {
+        var beta = t.status === 'beta' ? ' <span class="badge">Beta</span>' : '';
+        return '<li><a href="' + t.url + '">' + RC.escapeHtml(t.name) + beta + '</a></li>';
+      }).join('');
+      return '<div class="fcat"><h4>' + g[1] + '</h4><ul>' + links + '</ul></div>';
+    }).join('');
+  }
+
   function buildFooter() {
     var mount = document.getElementById('site-footer');
     if (!mount) return;
-    var toolLinks = TOOLS.map(function (t) {
-      var linkable = t.status === 'live' || t.status === 'beta';
-      var href = linkable ? t.url : '#';
-      var soon = t.status === 'soon' ? ' <span class="badge">Soon</span>'
-               : (t.status === 'beta' ? ' <span class="badge">Beta</span>' : '');
-      return '<li><a href="' + href + '">' + RC.escapeHtml(t.name) + soon + '</a></li>';
-    }).join('');
 
     mount.innerHTML =
-      '<div class="container footer-grid">' +
+      '<div class="container footer-main">' +
         '<div class="footer-brand">' +
           '<a class="brand footer-brand-lockup" href="/" aria-label="ReidConvert home">' +
             '<span class="mark-chip"><img src="/assets/img/logo-mark.png" alt="" width="56" height="56" loading="lazy"></span>' +
             '<span class="brand-name">ReidConvert</span>' +
           '</a>' +
           '<p>Free, private file conversion that runs entirely in your browser. Your files are never uploaded.</p>' +
+          '<a class="footer-all" href="/#tools">Browse all converters &rarr;</a>' +
         '</div>' +
-        '<div><h3>Converters</h3><ul>' + toolLinks + '</ul></div>' +
-        '<div><h3>Company</h3><ul>' +
+        '<div class="footer-cats-wrap">' +
+          '<h3>Converters</h3>' +
+          '<div class="footer-cats">' + footerCategories() + '</div>' +
+        '</div>' +
+        '<div class="footer-company"><h3>Company</h3><ul>' +
           '<li><a href="/about.html">About</a></li>' +
           '<li><a href="/contact.html">Contact</a></li>' +
           '<li><a href="/privacy.html">Privacy</a></li>' +
@@ -265,7 +294,7 @@
         '</ul></div>' +
       '</div>' +
       '<div class="container footer-bottom"><p>&copy; 2026 ReidConvert. All rights reserved.</p>' +
-      '<p class="footer-loc">🇺🇸 Jacksonville, FL 🇺🇸</p>' +
+      '<p class="footer-loc">' + US_FLAG + '<span>Jacksonville, FL</span>' + US_FLAG + '</p>' +
       '<p class="muted">Converted locally &mdash; nothing leaves your device.</p></div>';
   }
 
