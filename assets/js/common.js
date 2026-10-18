@@ -153,6 +153,29 @@
     return items;
   }
 
+  function themeToggleMarkup() {
+    return '<button class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch colour theme" title="Toggle dark mode">' +
+      '<svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+      '<svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.6M12 19.4V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.6M19.4 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8" stroke-linecap="round"/></svg>' +
+      '</button>';
+  }
+
+  /* ---------- colour theme (dark mode) ---------- */
+  var THEME_KEY = 'rc-theme';
+  function currentTheme() {
+    return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  }
+  function applyTheme(theme, btn) {
+    document.documentElement.setAttribute('data-theme', theme);
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', theme === 'dark' ? '#0f1829' : '#01295D');
+    if (btn) {
+      var dark = theme === 'dark';
+      btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+      btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+
   function buildHeader() {
     var mount = document.getElementById('site-header');
     if (!mount) return;
@@ -160,9 +183,6 @@
       '<a class="skip-link" href="#main">Skip to content</a>' +
       '<div class="container nav">' +
         logoMarkup() +
-        '<button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Open menu">' +
-          '<span></span><span></span><span></span>' +
-        '</button>' +
         '<nav id="nav-menu" class="nav-menu" aria-label="Primary">' +
           '<ul class="nav-list">' +
             '<li class="has-sub">' +
@@ -173,6 +193,12 @@
             '<li><a href="/contact.html">Contact</a></li>' +
           '</ul>' +
         '</nav>' +
+        '<div class="nav-actions">' +
+          themeToggleMarkup() +
+          '<button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Open menu">' +
+            '<span></span><span></span><span></span>' +
+          '</button>' +
+        '</div>' +
       '</div>';
 
     var toggle = mount.querySelector('.nav-toggle');
@@ -189,6 +215,25 @@
         mount.querySelector('.has-sub').classList.toggle('open');
       }
     });
+
+    // theme toggle: override system default, persist the choice
+    var tbtn = mount.querySelector('.theme-toggle');
+    applyTheme(currentTheme(), tbtn);
+    tbtn.addEventListener('click', function () {
+      var next = currentTheme() === 'dark' ? 'light' : 'dark';
+      applyTheme(next, tbtn);
+      try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+    });
+    // follow the OS if the visitor hasn't explicitly chosen a theme
+    try {
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      var onChange = function (e) {
+        if (localStorage.getItem(THEME_KEY)) return;
+        applyTheme(e.matches ? 'dark' : 'light', tbtn);
+      };
+      if (mq.addEventListener) mq.addEventListener('change', onChange);
+      else if (mq.addListener) mq.addListener(onChange);
+    } catch (e) {}
   }
 
   function buildFooter() {
@@ -220,6 +265,7 @@
         '</ul></div>' +
       '</div>' +
       '<div class="container footer-bottom"><p>&copy; 2026 ReidConvert. All rights reserved.</p>' +
+      '<p class="footer-loc">🇺🇸 Jacksonville, FL 🇺🇸</p>' +
       '<p class="muted">Converted locally &mdash; nothing leaves your device.</p></div>';
   }
 
