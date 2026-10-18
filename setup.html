@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Turn it on — Setup checklist | ReidConvert</title>
+<meta name="description" content="Internal setup checklist for switching on ReidConvert accounts, the free conversion limit and $5/month Stripe billing.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#01295D">
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<script>(function(){try{var s=localStorage.getItem("rc-theme");var d=s?s==="dark":matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("data-theme",d?"dark":"light");}catch(e){}})();</script>
+<link rel="stylesheet" href="/assets/css/main.css">
+<style>
+  .setup-lead { max-width: 760px; }
+  .phase-head { display: flex; align-items: center; gap: 12px; margin: 0 0 4px; }
+  .phase-num { display: inline-flex; align-items: center; justify-content: center; flex: none;
+    width: 34px; height: 34px; border-radius: 50%; background: var(--navy); color: #fff; font-weight: 800; }
+  .phase-head h2 { margin: 0; }
+  .phase-time { font-size: .8rem; font-weight: 700; color: var(--gold-600); text-transform: uppercase; letter-spacing: .05em; }
+  .setup-steps { counter-reset: step; list-style: none; padding: 0; margin: 16px 0 0; }
+  .setup-steps > li { position: relative; padding-left: 38px; margin: 0 0 16px; line-height: 1.55; }
+  .setup-steps > li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 1px;
+    width: 26px; height: 26px; border-radius: 50%; background: var(--gold-100); color: var(--gold-600);
+    font-weight: 800; font-size: .82rem; display: flex; align-items: center; justify-content: center; }
+  .setup-card { display: block; margin: 20px 0; }
+  .setup-card > h3:first-child, .setup-card > .phase-head:first-child { margin-top: 0; }
+  code { background: var(--bg-soft); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; font-size: .9em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  pre { background: var(--bg-soft); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; overflow: auto;
+    font-size: .85rem; line-height: 1.55; margin: 12px 0 0; }
+  pre code { background: none; border: 0; padding: 0; }
+  .flags-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: .92rem; }
+  .flags-table th, .flags-table td { text-align: left; padding: 10px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .flags-table th { color: var(--ink); white-space: nowrap; }
+  .flags-table code { white-space: nowrap; }
+  .pill { display: inline-block; font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+    padding: 2px 9px; border-radius: 999px; background: var(--bg-soft); color: var(--muted); border: 1px solid var(--line); }
+  .pill-off { background: var(--bg-soft); color: var(--muted); }
+  .check-list { list-style: none; padding: 0; margin: 14px 0 0; }
+  .check-list li { position: relative; padding-left: 30px; margin: 0 0 10px; line-height: 1.5; }
+  .check-list li::before { content: ""; position: absolute; left: 0; top: 3px; width: 18px; height: 18px; border-radius: 5px;
+    border: 2px solid var(--gold); }
+</style>
+<script defer src="/assets/js/tools.js"></script>
+<script defer src="/assets/js/common.js"></script>
+<script defer src="/assets/js/config.js"></script>
+<script defer src="/assets/js/auth.js"></script>
+<script defer src="/assets/js/limits.js"></script>
+<script defer src="/assets/js/usage.js"></script>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main" class="page">
+  <div class="container prose">
+    <p class="eyebrow">Admin · Internal setup</p>
+    <h1>Turn it on: accounts, limits &amp; billing</h1>
+    <p class="setup-lead">Accounts, the free conversion limit, and $5/month Member billing are <strong>already built and tested</strong> — they ship switched <strong>off</strong> so the public site is unaffected. Work through the three phases in order. Full detail lives in
+      <code>docs/SUPABASE_SETUP.md</code> and <code>docs/STRIPE_SETUP.md</code>.</p>
+
+    <div class="cv-notice info show" style="display:block">
+      <strong>Current state:</strong> everything below is gated behind flags in <code>assets/js/config.js</code>.
+      Nothing charges anyone and no login UI appears until you complete Phase&nbsp;1 and flip the flags.
+    </div>
+
+    <!-- PHASE 1 -->
+    <section class="tool-card setup-card">
+      <div class="phase-head"><span class="phase-num">1</span><h2>Create accounts (Supabase)</h2></div>
+      <p class="phase-time">≈ 15 minutes · required first</p>
+      <ol class="setup-steps">
+        <li>Create a free project at <a href="https://supabase.com" target="_blank" rel="noopener">supabase.com</a>. From <em>Settings → API</em>, copy the <strong>Project URL</strong> and the <strong>anon public</strong> key (the anon key is safe to ship).</li>
+        <li>Paste both into <code>assets/js/config.js</code>:
+          <pre><code>SUPABASE_URL: 'https://xxxx.supabase.co',
+SUPABASE_ANON_KEY: 'eyJ...'</code></pre></li>
+        <li>In the Supabase <strong>SQL editor</strong>, paste &amp; run the schema block from <code>docs/SUPABASE_SETUP.md</code> (creates <code>profiles</code> + row-level security, the sign-up trigger, <code>conversion_history</code> and its index).</li>
+        <li><em>(Optional)</em> Enable the Google provider under <em>Authentication → Providers</em> and add <code>https://reidconvert.com/account/</code> to the redirect allow-list.</li>
+        <li>Set <code>AUTH_ENABLED: true</code> in <code>config.js</code>, then commit &amp; push.</li>
+      </ol>
+      <p style="margin-top:16px"><strong>Result:</strong> the header shows <em>Log in</em>, and sign-up, log-in, password reset and the <code>/account/</code> page all work. Conversions start being counted per user.</p>
+    </section>
+
+    <!-- PHASE 2 -->
+    <section class="tool-card setup-card">
+      <div class="phase-head"><span class="phase-num">2</span><h2>Set the free conversion limit</h2></div>
+      <p class="phase-time">≈ 1 minute</p>
+      <ol class="setup-steps">
+        <li>The free allowance is <strong>one number</strong> in <code>config.js</code> — change it any time:
+          <pre><code>FREE_MONTHLY_CONVERSIONS: 10   // conversions per calendar month</code></pre></li>
+        <li>Usage is <strong>tracked</strong> as soon as accounts are on, but nobody is <strong>blocked</strong> until you set <code>USAGE_ENFORCED: true</code>. Leave it <span class="pill pill-off">off</span> until billing is live (Phase&nbsp;3), so free users always have a way to upgrade.</li>
+      </ol>
+      <p style="margin-top:16px"><strong>Result:</strong> the <code>/account/</code> page shows “X of 10 free conversions used this month.” When enforced, hitting the limit shows a clean <em>Upgrade to Member</em> prompt.</p>
+    </section>
+
+    <!-- PHASE 3 -->
+    <section class="tool-card setup-card">
+      <div class="phase-head"><span class="phase-num">3</span><h2>Switch on $5/month payments (Stripe)</h2></div>
+      <p class="phase-time">≈ 30–45 minutes · needs a serverless host</p>
+      <ol class="setup-steps">
+        <li>In Stripe → <em>Products</em>, add “ReidConvert Member” with a <strong>$5.00 USD / month recurring</strong> price. Copy the <strong>Price ID</strong> (<code>price_…</code>).</li>
+        <li>Deploy the three functions in <code>serverless/</code> (<code>create-checkout-session</code>, <code>create-portal-session</code>, <code>stripe-webhook</code>) to a host — Supabase Edge Functions, Netlify, Vercel or Cloudflare. Install <code>stripe</code> + <code>@supabase/supabase-js</code>.</li>
+        <li>Set the host environment variables from <code>.env.example</code> (never commit these):
+          <pre><code>STRIPE_SECRET_KEY=sk_live_...        STRIPE_PRICE_ID=price_...
+STRIPE_WEBHOOK_SECRET=whsec_...      SUPABASE_SERVICE_ROLE_KEY=...
+SUPABASE_URL=...                     STRIPE_SUCCESS_URL / STRIPE_CANCEL_URL</code></pre></li>
+        <li>Register a Stripe <strong>webhook</strong> pointing at your deployed <code>stripe-webhook</code> URL; subscribe to <code>checkout.session.completed</code>, <code>customer.subscription.updated</code>, <code>customer.subscription.deleted</code>; copy the signing secret into <code>STRIPE_WEBHOOK_SECRET</code>. Make sure the host passes the <strong>raw</strong> request body.</li>
+        <li>Point the site at your functions — set the base URL in <code>config.js</code>:
+          <pre><code>FUNCTIONS_URL: 'https://xxxx.supabase.co/functions/v1'</code></pre>
+          The Pricing &amp; Account “Upgrade” buttons light up automatically.</li>
+        <li>Test in Stripe <strong>test mode</strong>: complete a checkout and confirm the webhook flips the user’s <code>subscription_status</code> to <code>active</code>.</li>
+        <li>Finally, set <code>MEMBERSHIP_ENFORCED: true</code> — the one flag that starts enforcing Free vs Member limits.</li>
+      </ol>
+    </section>
+
+    <!-- FLAGS -->
+    <h2>The flags (in <code>assets/js/config.js</code>)</h2>
+    <table class="flags-table">
+      <thead><tr><th>Flag</th><th>Default</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>AUTH_ENABLED</code></td><td><span class="pill pill-off">false</span></td><td>Shows login UI and turns on accounts. Needs the Supabase keys set.</td></tr>
+        <tr><td><code>FREE_MONTHLY_CONVERSIONS</code></td><td><code>10</code></td><td>The free monthly conversion allowance. Members are unlimited.</td></tr>
+        <tr><td><code>USAGE_ENFORCED</code></td><td><span class="pill pill-off">false</span></td><td>Actually <em>blocks</em> free users at the limit (with the upgrade prompt). Keep off until billing is live.</td></tr>
+        <tr><td><code>FUNCTIONS_URL</code></td><td><code>''</code></td><td>Base URL of the deployed Stripe functions. Empty → Upgrade buttons stay “coming soon.”</td></tr>
+        <tr><td><code>MEMBERSHIP_ENFORCED</code></td><td><span class="pill pill-off">false</span></td><td>Treats paying users as Members (unlimited) and enforces Free limits. Flip last, after a test checkout works.</td></tr>
+      </tbody>
+    </table>
+
+    <!-- TESTING -->
+    <h2>Before you go live — test</h2>
+    <ul class="check-list">
+      <li>Sign up, log in, log out, and “forgot password” all work from <code>/login/</code> and <code>/signup/</code>.</li>
+      <li>A test-mode Stripe checkout completes and the webhook sets <code>subscription_status = 'active'</code>.</li>
+      <li>Cancelling a subscription (<code>customer.subscription.deleted</code>) sets it back to <code>free</code>.</li>
+      <li>A free user is blocked after the limit; a Member converts without limits.</li>
+      <li>Row-level security holds: from the browser console a normal user <strong>cannot</strong> change their own <code>subscription_status</code>.</li>
+    </ul>
+
+    <!-- MANUAL PAID -->
+    <h2>Mark a user as Member (for testing, before Stripe)</h2>
+    <p>Run this in the Supabase SQL editor — it’s exactly what the Stripe webhook does automatically once billing is live:</p>
+    <pre><code>update public.profiles
+set subscription_status = 'active'
+where id = (select id from auth.users where email = 'you@example.com');</code></pre>
+    <p>Set it back to <code>'free'</code> to test the Free experience again. (A Member is only treated as unlimited when <code>MEMBERSHIP_ENFORCED: true</code>.)</p>
+
+    <p style="margin-top:28px;color:var(--muted)">Full reference: <code>docs/SUPABASE_SETUP.md</code> · <code>docs/STRIPE_SETUP.md</code> · <code>BUILD_REPORT.md</code>.</p>
+  </div>
+</main>
+<footer id="site-footer"></footer>
+</body>
+</html>
