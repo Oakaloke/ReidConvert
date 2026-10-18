@@ -256,15 +256,25 @@
 
   function footerCategories() {
     var groups = [['Image', 'Images'], ['Document', 'Documents'], ['Video', 'Video'], ['Audio', 'Audio']];
+    var chevron = '<svg class="fcat-chev" width="13" height="13" viewBox="0 0 12 12" aria-hidden="true">' +
+      '<path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     return groups.map(function (g) {
-      // live + beta only — keep the footer tidy; "coming soon" tools live in the nav + tools section
-      var items = TOOLS.filter(function (t) { return t.category === g[0] && (t.status === 'live' || t.status === 'beta'); });
+      var items = TOOLS.filter(function (t) { return t.category === g[0]; });
       if (!items.length) return '';
       var links = items.map(function (t) {
-        var beta = t.status === 'beta' ? ' <span class="badge">Beta</span>' : '';
-        return '<li><a href="' + t.url + '">' + RC.escapeHtml(t.name) + beta + '</a></li>';
+        var linkable = t.status === 'live' || t.status === 'beta';
+        var tag = t.status === 'beta' ? ' <span class="badge">Beta</span>'
+                : t.status === 'soon' ? ' <span class="badge badge-soon">Soon</span>' : '';
+        return linkable
+          ? '<li><a href="' + t.url + '">' + RC.escapeHtml(t.name) + tag + '</a></li>'
+          : '<li><span class="fcat-soon">' + RC.escapeHtml(t.name) + tag + '</span></li>';
       }).join('');
-      return '<div class="fcat"><h4>' + g[1] + '</h4><ul>' + links + '</ul></div>';
+      // collapsed by default — the list only appears when the category header is opened
+      return '<details class="fcat">' +
+        '<summary class="fcat-head"><span class="fcat-title">' + g[1] +
+          ' <span class="fcat-count">' + items.length + '</span></span>' + chevron + '</summary>' +
+        '<ul>' + links + '</ul>' +
+      '</details>';
     }).join('');
   }
 
