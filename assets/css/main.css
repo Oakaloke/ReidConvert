@@ -407,6 +407,26 @@ input[type=range] { accent-color: var(--navy); width: 180px; }
 .cv-switch input:checked + .cv-switch-track .cv-switch-dot { transform: translateX(17px); }
 .cv-switch input:focus-visible + .cv-switch-track { outline: 3px solid #7db0ff; outline-offset: 2px; }
 
+/* batch progress bar — full-width, light-blue fill, gold check when complete */
+.cv-progress { display: flex; align-items: center; gap: 14px; margin: 2px 2px 16px; }
+.cv-progress-track { position: relative; flex: 1 1 auto; height: 12px; border-radius: 999px;
+  background: var(--bg-soft); border: 1px solid var(--line); overflow: hidden; }
+.cv-progress-fill { height: 100%; width: 0; border-radius: 999px;
+  background: linear-gradient(90deg, #7fcdee, #4aa6e0); /* light blue */
+  box-shadow: 0 0 10px rgba(74,166,224,.45);
+  transition: width .4s cubic-bezier(.4,0,.2,1); }
+.cv-progress-meta { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  font-size: .85rem; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.cv-progress-check { display: none; width: 20px; height: 20px; color: var(--gold); flex: none; }
+.cv-progress-check svg { width: 100%; height: 100%; }
+.cv-progress.is-complete .cv-progress-check { display: inline-flex; animation: cv-check-pop .32s cubic-bezier(.2,1.4,.4,1); }
+.cv-progress.is-complete .cv-progress-meta { color: var(--gold-600); }
+@keyframes cv-check-pop { 0% { transform: scale(.3); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .cv-progress-fill { transition: none; }
+  .cv-progress.is-complete .cv-progress-check { animation: none; }
+}
+
 /* bulk bar */
 .cv-bulk { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
   background: var(--navy); color: #fff; border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 12px; }

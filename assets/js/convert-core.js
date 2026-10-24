@@ -102,6 +102,10 @@
             '<button type="button" class="btn btn-gold btn-sm" id="cvDownloadAll" disabled>' + ICON.download + ' Download all</button>' +
           '</div>' +
         '</div>' +
+        '<div class="cv-progress" id="cvProgress" hidden role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Overall conversion progress">' +
+          '<div class="cv-progress-track"><div class="cv-progress-fill" id="cvProgressFill"></div></div>' +
+          '<span class="cv-progress-meta"><span class="cv-progress-check" id="cvProgressCheck" aria-hidden="true">' + ICON.check + '</span><span class="cv-progress-label" id="cvProgressLabel"></span></span>' +
+        '</div>' +
         '<div class="cv-bulk" id="cvBulk" hidden role="region" aria-label="Bulk actions">' +
           '<span class="cv-bulk-count" id="cvBulkCount">0 selected</span>' +
           '<div class="cv-bulk-actions">' +
@@ -122,7 +126,9 @@
         listEl = q('#cvList'), countEl = q('#cvCount'), noticeEl = q('#cvNotice'),
         liveEl = q('#cvLive'), overlayEl = q('#cvOverlay'),
         autoEl = q('#cvAuto'), dlAllEl = q('#cvDownloadAll'),
-        bulkEl = q('#cvBulk'), bulkCountEl = q('#cvBulkCount');
+        bulkEl = q('#cvBulk'), bulkCountEl = q('#cvBulkCount'),
+        progressEl = q('#cvProgress'), progressFillEl = q('#cvProgressFill'),
+        progressLabelEl = q('#cvProgressLabel');
     autoEl.checked = autoConvert;
 
     function announce(msg) { liveEl.textContent = ''; liveEl.textContent = msg; }
@@ -408,6 +414,30 @@
       q('#cvBulkDownload').disabled = !anyDone;
     }
 
+    /* ---------- batch progress bar (light-blue fill, gold check when all done) ---------- */
+    function updateProgress(done) {
+      var total = items.length;
+      if (!total) { progressEl.hidden = true; progressEl.classList.remove('is-complete', 'is-done'); return; }
+      progressEl.hidden = false;
+      var failed = 0, active = 0;
+      items.forEach(function (i) {
+        if (i.status === 'failed') failed++;
+        else if (i.status === 'converting' || i.status === 'validating') active++;
+      });
+      // finished = full credit, in-flight = half credit, so the bar advances as work happens
+      var value = Math.min(total, done + failed + active * 0.5);
+      var pct = Math.round(value / total * 100);
+      progressFillEl.style.width = pct + '%';
+      progressEl.setAttribute('aria-valuenow', String(pct));
+      var allResolved = (done + failed === total);
+      var allGood = allResolved && done === total;             // every file converted successfully
+      progressEl.classList.toggle('is-complete', allGood);     // shows the gold check
+      progressEl.classList.toggle('is-done', allResolved);
+      if (allGood) progressLabelEl.textContent = 'All ' + total + ' converted';
+      else if (allResolved) progressLabelEl.textContent = done + ' converted · ' + failed + ' failed';
+      else progressLabelEl.textContent = done + ' of ' + total + ' converted';
+    }
+
     /* ---------- global refresh ---------- */
     function refresh() {
       var finished = items.filter(function (i) { return i.status === 'finished'; });
@@ -415,6 +445,7 @@
         (finished.length ? ' · ' + finished.length + ' done' : '');
       dlAllEl.disabled = finished.length === 0;
       dlAllEl.innerHTML = ICON.download + ' Download ' + (finished.length > 1 ? 'all (ZIP)' : finished.length === 1 ? 'file' : 'all');
+      updateProgress(finished.length);
       // clean selection of removed ids
       Object.keys(selection).forEach(function (id) { if (!items.some(function (i) { return String(i.id) === id; })) delete selection[id]; });
       refreshBulk();
