@@ -39,7 +39,7 @@
 }
 </script>
 
-<script defer src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/heic-to@1.6.6/dist/iife/heic-to.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script defer src="/assets/js/tools.js"></script>
 <script defer src="/assets/js/common.js"></script>
@@ -138,22 +138,31 @@
       if (/memory|allocat|out of/i.test(m)) return 'This HEIC photo is too large for the browser to decode. Try a smaller image.';
       return 'This HEIC/HEIF file could not be decoded. It may use an unsupported variant.';
     }
-    // HEIC/HEIF -> array of HTMLImageElements
+    // Open-source decoder fallback (heic-to / libheif-wasm). Handles modern iPhone
+    // HDR "gain-map" HEICs that older decoders choke on, in browsers without native
+    // HEIC support (Chrome, Edge, Firefox).
+    function decodeViaLib(file) {
+      var heicTo = window.HeicTo;
+      if (typeof heicTo !== 'function') {
+        return Promise.reject(new Error('The HEIC decoder failed to load — check your connection and refresh.'));
+      }
+      return withTimeout(
+        heicTo({ blob: file, type: 'image/jpeg', quality: 0.95 }),
+        90000,
+        'This HEIC file took too long to decode (it may be very large).'
+      ).then(function (out) {
+        var blobs = Array.isArray(out) ? out : [out];
+        return Promise.all(blobs.map(loadImage));
+      }).catch(function (e) { throw new Error(friendlyHeicError(e)); });
+    }
+    // HEIC/HEIF -> array of HTMLImageElements.
+    // Native decode first (fast, no download — Safari / iOS), then the library fallback.
     function decodeHeicToImages(file) {
       return loadImage(file).then(function (img) {
-        return [img]; // native decode succeeded (Safari / iOS)
+        if (!img.naturalWidth || !img.naturalHeight) return decodeViaLib(file); // empty native decode → fall back
+        return [img];
       }, function () {
-        if (typeof heic2any !== 'function') {
-          throw new Error('The HEIC decoder failed to load — check your connection and refresh.');
-        }
-        return withTimeout(
-          heic2any({ blob: file, toType: 'image/jpeg', quality: 0.95 }),
-          90000,
-          'This HEIC file took too long to decode (it may be very large).'
-        ).then(function (out) {
-          var blobs = Array.isArray(out) ? out : [out];
-          return Promise.all(blobs.map(loadImage));
-        }).catch(function (e) { throw new Error(friendlyHeicError(e)); });
+        return decodeViaLib(file);
       });
     }
 
