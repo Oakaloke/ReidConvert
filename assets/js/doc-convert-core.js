@@ -665,6 +665,8 @@
 
     /* ---------- wire top-level controls ---------- */
     RC.setupDropzone(dropEl, addFiles, { inputEl: inputEl });
+    // Pick up a file handed off from the landing page (dropped once there).
+    if (RC.takeStashedFiles) RC.takeStashedFiles(engine.key).then(function (f) { if (f && f.length) addFiles(f); });
     q('#cvPick').addEventListener('click', function (e) { e.stopPropagation(); inputEl.click(); });
     q('#cvAddMore').addEventListener('click', function () { inputEl.click(); });
     q('#cvClear').addEventListener('click', clearAll);

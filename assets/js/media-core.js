@@ -185,6 +185,8 @@
     }
 
     RC.setupDropzone(drop, addFiles, { inputEl: input });
+    // Pick up a file handed off from the landing page (dropped once there).
+    if (RC.takeStashedFiles) RC.takeStashedFiles(engine.key).then(function (f) { if (f && f.length) addFiles(f); });
     clearBtn.addEventListener('click', function () { items.forEach(function (i) { if (i.url) URL.revokeObjectURL(i.url); }); items = []; render(); });
 
     downloadAllBtn.addEventListener('click', function () {

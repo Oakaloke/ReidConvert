@@ -171,12 +171,17 @@
 
     function route(files) {
       msg.textContent = '';
-      var f = files[0];
+      var all = Array.prototype.slice.call(files);
+      var f = all[0];
       var ext = RC.extOf(f.name);
       var tool = RC.toolForExt(ext);
       if (tool && (tool.status === 'live' || tool.status === 'beta')) {
         msg.textContent = 'Opening ' + tool.name + '…';
-        window.location.href = tool.url;
+        // carry every dropped file that belongs to this converter, so the user
+        // never has to drop it a second time on the tool page
+        var forTool = all.filter(function (x) { return RC.toolForExt(RC.extOf(x.name)) === tool; });
+        var go = function () { window.location.href = tool.url; };
+        (RC.stashFiles ? RC.stashFiles(tool.key, forTool) : Promise.resolve()).then(go, go);
       } else if (tool) {
         msg.textContent = '“' + tool.name + '” is coming soon — check back shortly!';
       } else if (ext) {

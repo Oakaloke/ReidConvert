@@ -128,6 +128,80 @@
     }
   };
 
+  /* ---------- cross-page file handoff ----------
+   * Lets the landing page accept a drop once, then carry the actual File(s)
+   * to the matching converter page (which picks them up and auto-converts).
+   * Uses IndexedDB because File/Blob objects survive a full navigation there
+   * (localStorage can't store binary). Keyed by tool so a stash meant for one
+   * converter is never consumed by another. One-shot + expires after 2 min.
+   */
+  var HANDOFF_DB = 'rc-handoff', HANDOFF_STORE = 'files', HANDOFF_KEY = 'pending';
+  function openHandoffDB() {
+    return new Promise(function (resolve, reject) {
+      try {
+        var req = indexedDB.open(HANDOFF_DB, 1);
+        req.onupgradeneeded = function () { req.result.createObjectStore(HANDOFF_STORE); };
+        req.onsuccess = function () { resolve(req.result); };
+        req.onerror = function () { reject(req.error); };
+      } catch (e) { reject(e); }
+    });
+  }
+  // Store raw bytes (ArrayBuffer) + metadata, not the File object itself —
+  // Safari/WebKit doesn't reliably persist File/Blob in IndexedDB across a
+  // navigation, but ArrayBuffers are rock-solid everywhere.
+  function readArrayBuffer(f) {
+    if (f.arrayBuffer) return f.arrayBuffer();
+    return new Promise(function (resolve, reject) {
+      var r = new FileReader();
+      r.onload = function () { resolve(r.result); };
+      r.onerror = function () { reject(r.error); };
+      r.readAsArrayBuffer(f);
+    });
+  }
+  RC.stashFiles = function (toolKey, files) {
+    var arr = Array.prototype.slice.call(files || []);
+    if (!arr.length || !window.indexedDB) return Promise.resolve(false);
+    return Promise.all(arr.map(function (f) {
+      return readArrayBuffer(f).then(function (buf) {
+        return { name: f.name, type: f.type, lastModified: f.lastModified || Date.now(), buf: buf };
+      });
+    })).then(function (recs) {
+      return openHandoffDB().then(function (db) {
+        return new Promise(function (resolve) {
+          var tx = db.transaction(HANDOFF_STORE, 'readwrite');
+          tx.objectStore(HANDOFF_STORE).put({ key: toolKey, recs: recs, ts: Date.now() }, HANDOFF_KEY);
+          tx.oncomplete = function () { db.close(); resolve(true); };
+          tx.onerror = function () { db.close(); resolve(false); };
+        });
+      });
+    }).catch(function () { return false; });
+  };
+  RC.takeStashedFiles = function (toolKey) {
+    if (!window.indexedDB) return Promise.resolve(null);
+    return openHandoffDB().then(function (db) {
+      return new Promise(function (resolve) {
+        var tx = db.transaction(HANDOFF_STORE, 'readwrite');
+        var store = tx.objectStore(HANDOFF_STORE);
+        var getReq = store.get(HANDOFF_KEY);
+        getReq.onsuccess = function () {
+          var rec = getReq.result;
+          store.delete(HANDOFF_KEY);                       // one-shot: consume it
+          tx.oncomplete = function () {
+            db.close();
+            if (!rec || !rec.recs || !rec.recs.length) return resolve(null);
+            if (rec.key && toolKey && rec.key !== toolKey) return resolve(null);   // meant for another tool
+            if (Date.now() - (rec.ts || 0) > 120000) return resolve(null);         // stale
+            var files = rec.recs.map(function (r) {
+              return new File([r.buf], r.name, { type: r.type, lastModified: r.lastModified });
+            });
+            resolve(files);
+          };
+        };
+        getReq.onerror = function () { db.close(); resolve(null); };
+      });
+    }).catch(function () { return null; });
+  };
+
   /* Prevent the browser from navigating when a file is dropped outside a zone. */
   window.addEventListener('dragover', function (e) { e.preventDefault(); });
   window.addEventListener('drop', function (e) { e.preventDefault(); });
