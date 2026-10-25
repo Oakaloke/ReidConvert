@@ -19,6 +19,7 @@ self.onmessage=async({data:d})=>{
   output.addAudioTrack(source,{languageCode:'eng',name:'Whole book'});await output.start();
   send('status',{message:'Preparing the local voice engine…'});
   const tts=await KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX',{dtype:'q8',device:'wasm',progress_callback:p=>{if(p.status==='progress')send('model',{file:p.file,progress:p.progress});}});
+  send('status',{message:'Narrating all chapters and encoding MP4…'});
   let samples=0,done=0;const total=d.chapters.reduce((n,c)=>n+speechChunks(c.text).length,0),start=performance.now();
   for(let section=0;section<d.chapters.length;section++){
    for(const text of speechChunks(d.chapters[section].text)){
