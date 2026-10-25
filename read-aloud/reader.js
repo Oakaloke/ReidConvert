@@ -51,7 +51,7 @@ function makeWorker(){
     }
     if(d.type==='done'){
       finished=true;generating=false;$('cancel').hidden=true;ui.generate.disabled=false;ui.chapter.disabled=false;ui.voice.disabled=false;ui.progress.value=100;
-      const samples=audioParts.reduce((a,p)=>a+p.samples,0);const blob=new Blob([wavHeader(samples,audioParts[0]?.rate||24000),...audioParts.map(p=>p.pcm)],{type:'audio/wav'});downloadUrl=URL.createObjectURL(blob);$('download').href=downloadUrl;$('download').download=`${title.replace(/\.[^.]+$/,'').replace(/[^a-z0-9 _-]/gi,'').slice(0,70)} - ${chapters[+ui.chapter.value].title.replace(/[^a-z0-9 _-]/gi,'').slice(0,70)}.wav`;$('download').setAttribute('aria-disabled','false');status('Your chapter is ready.',`${clock(duration)} of audio. Download it before changing chapters or closing this page.`);updateTime();$('partInfo').textContent=`Segment ${current+1} of ${audioParts.length}`;
+      const samples=audioParts.reduce((a,p)=>a+p.samples,0);const blob=new Blob([wavHeader(samples,audioParts[0]?.rate||24000),...audioParts.map(p=>p.pcm)],{type:'audio/wav'});downloadUrl=URL.createObjectURL(blob);$('download').href=downloadUrl;$('download').download=`${title.replace(/\.[^.]+$/,'').replace(/[^a-z0-9 _-]/gi,'').slice(0,70)} - ${chapters[+ui.chapter.value].title.replace(/[^a-z0-9 _-]/gi,'').slice(0,70)}.wav`;$('download').setAttribute('aria-disabled','false');status('Your chapter is ready.',`${clock(duration)} of audio. This WAV covers the selected listening section. Download it before changing chapters or closing this page.`);updateTime();$('partInfo').textContent=`Segment ${current+1} of ${audioParts.length}`;
     }
     if(d.type==='error')workerError(d.message);
   };return w;
