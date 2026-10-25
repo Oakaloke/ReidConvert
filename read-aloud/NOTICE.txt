@@ -1,0 +1,16 @@
+ReidConvert Read Aloud
+This tool runs document extraction and speech inference in the visitor's browser.
+No document text is intentionally transmitted or persisted by this tool.
+
+Runtime libraries (version-pinned):
+Kokoro.js 1.2.1 — Apache-2.0 — https://github.com/hexgrad/kokoro
+Includes Transformers.js/ONNX Runtime and phonemizer dependencies under their respective licenses.
+Kokoro-82M model — Apache-2.0 — https://huggingface.co/hexgrad/Kokoro-82M
+ONNX model distribution — https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX
+JSZip 3.10.1 — MIT or GPLv3 — https://github.com/Stuk/jszip
+PDF.js 4.10.38 — Apache-2.0 — https://github.com/mozilla/pdf.js
+
+Kokoro model and voice files are obtained from the upstream model repository.
+Software and model download hosts receive normal network metadata such as IP address;
+document contents are not included in these requests. Cached models can be removed
+using the browser's site-data settings. This release does not use remote speech APIs.

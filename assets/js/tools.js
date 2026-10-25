@@ -16,6 +16,11 @@
  */
 window.RC_TOOLS = [
   {
+    key: 'read-aloud', name: 'Read Aloud', from: 'DOCX / PDF / TXT', to: 'Audio',
+    url: '/read-aloud/', desc: 'Listen with local AI voices. Private document reading and chapter audio downloads.',
+    category: 'Audio', status: 'live', accept: []
+  },
+  {
     key: 'heic-to-jpg',
     name: 'HEIC to JPG',
     from: 'HEIC',
