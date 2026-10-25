@@ -14,3 +14,5 @@ Kokoro model and voice files are obtained from the upstream model repository.
 Software and model download hosts receive normal network metadata such as IP address;
 document contents are not included in these requests. Cached models can be removed
 using the browser's site-data settings. This release does not use remote speech APIs.
+
+Whole-book MP4 uses Mediabunny 1.62.1 and @mediabunny/aac-encoder 1.62.1 (MPL-2.0). Unmodified pinned jsDelivr ESM distributions, with upstream source and licenses at https://github.com/Vanilagy/mediabunny . The AAC encoder includes a WASM build of FFmpeg (LGPL components); see upstream package notices and source. Audio-only MP4/AAC is encoded locally. Temporary audio is written to this browser's origin-private filesystem, removed on clear/cancel/replacement. Interrupted files older than24hours are cleaned on a subsequent reader visit. Browser site-data controls can remove them. Document text is never written there.
